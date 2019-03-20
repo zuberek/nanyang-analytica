@@ -1,2 +1,1 @@
-# nanyang-analytica
-Repository for NTU Information Retrieval module
+# CZ4034-Information-Retrieval-Group-15

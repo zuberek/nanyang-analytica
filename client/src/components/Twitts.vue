@@ -1,0 +1,35 @@
+<template>
+    <div v-if="twitts.length === 0" class="whole-page" />
+    <div v-else class="row text-center">
+        <div v-for="twitt in twitts" :key="twitt.id" class="col-6 mb-2">
+            <div class="card">
+                <div class="row m-4">
+                    <div class="col-3 ">
+                        <img class="card-img-top" :src="twitt.user.picture.medium" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
+                        <h5 class="card-title mt-2">{{twitt.user.name.first}} {{twitt.user.name.last}}</h5>
+                        <p>{{twitt.user.registered.date.substring(0, 10)}}</p>
+                    </div>
+                    <div class="col-9">
+                        <div class="card-body">
+                            <p class="card-text">{{twitt.joke}}</p>
+                            <a href="#" class="btn btn-info">Go to user</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>   
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'twitts',
+    props: {
+        twitts: {
+            type: Array,
+            required: true,
+        },
+    },
+}
+</script>
