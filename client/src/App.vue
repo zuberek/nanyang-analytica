@@ -31,7 +31,7 @@ export default {
   },
   data () {
     return {
-      sidebarOpen: true,
+      sidebarOpen: false,
       searchQuery: {
         search: "",
         gender: "",

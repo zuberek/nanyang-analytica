@@ -1,6 +1,8 @@
 <template>
-    <div style="width:120px; margin-top:30vh;" class="mx-auto">
+    <div style="width:150px; margin-top:30vh;" class="mx-auto">
         <pacman-loader  :loading="loading" :color="'#5bc0de'" :size="'30px'"/>
+        <p class="mt-2">
+        We're working on it...</p>
     </div>
 </template>
 
@@ -20,12 +22,3 @@ export default {
     },
 }
 </script>
-
-<style>
-.loader {
-    position: relative;
-    top: 50%;
-    margin-top: -10px;
-  }
-</style>
-

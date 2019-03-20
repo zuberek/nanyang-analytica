@@ -1,5 +1,15 @@
 <template>
-    <div v-if="twitts.length === 0" class="whole-page" />
+    <div v-if="twitts.length === 0" class="whole-page">
+        <div style="width:250px; margin-top:20vh;" class="mx-auto text-center">
+
+            <span>
+                Hello! 🤗 <br>
+                To search Twitter type in a keyword <br>
+                or go to options
+            </span>
+            
+        </div>
+    </div>
     <div v-else class="row text-center">
         <div v-for="twitt in twitts" :key="twitt.id" class="col-lg-6 col-12 mb-2">
             <div class="card">
