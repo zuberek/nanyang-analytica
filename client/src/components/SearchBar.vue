@@ -49,6 +49,8 @@ export default {
         reset(key) {
             if (key === 'age') this.query.age = [0, 100];
             else this.query[key] = "";
+
+            this.load();
         }
     },
 }

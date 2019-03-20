@@ -1,7 +1,7 @@
 <template>
     <div v-if="twitts.length === 0" class="whole-page" />
     <div v-else class="row text-center">
-        <div v-for="twitt in twitts" :key="twitt.id" class="col-6 mb-2">
+        <div v-for="twitt in twitts" :key="twitt.id" class="col-lg-6 col-12 mb-2">
             <div class="card">
                 <div class="row m-4">
                     <div class="col-3 ">

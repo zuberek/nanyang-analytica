@@ -58,7 +58,7 @@ export default {
       
 
       axios
-        .get('http://api.icndb.com/jokes/random/' + NUMBER_OF_TWITTS)
+        .get('https://api.icndb.com/jokes/random/' + NUMBER_OF_TWITTS)
         .then(resulted => {
           var twitts = resulted.data.value;
 
