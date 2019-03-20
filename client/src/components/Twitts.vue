@@ -4,12 +4,12 @@
         <div v-for="twitt in twitts" :key="twitt.id" class="col-lg-6 col-12 mb-2">
             <div class="card">
                 <div class="row m-4">
-                    <div class="col-3 ">
+                    <div class="col-sm-3 col-12">
                         <img class="card-img-top" :src="twitt.user.picture.medium" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
                         <h5 class="card-title mt-2">{{twitt.user.name.first}} {{twitt.user.name.last}}</h5>
                         <p>{{twitt.user.registered.date.substring(0, 10)}}</p>
                     </div>
-                    <div class="col-9">
+                    <div class="col-sm-9 col-12">
                         <div class="card-body">
                             <p class="card-text">{{twitt.joke}}</p>
                             <a href="#" class="btn btn-info">Go to user</a>

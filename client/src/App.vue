@@ -93,4 +93,10 @@ export default {
     height: 100vh;
 }
 
+@media only screen and (max-width: 1300px) {
+  #page-wrap {
+    margin-top: 100px;
+  }
+}
+
 </style>
