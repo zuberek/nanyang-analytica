@@ -20,6 +20,7 @@ import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import axios from 'axios';
+import SearchEngine from '../search_engine/engine.js';
 
 export default {
   name: 'app',
@@ -47,35 +48,19 @@ export default {
     searchQuery: Object,
     sidebarOpen: Boolean,
   },
+  created() {
+    SearchEngine.init();
+  },
   methods: {
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
     },
     loadTwitts() {
       this.pending = true;
-      const NUMBER_OF_TWITTS = 10;
-      const NUMBER_OF_USERS = 30;
-      
 
-      axios
-        .get('https://api.icndb.com/jokes/random/' + NUMBER_OF_TWITTS)
-        .then(resulted => {
-          var twitts = resulted.data.value;
+      this.twitts = SearchEngine.search(this.searchQuery.search);
 
-          axios
-            .get('https://randomuser.me/api/?inc=gender,name,picture,dob,registered&results=' + NUMBER_OF_USERS)
-            .then(anotherResulted => {
-              var users = anotherResulted.data.results;
-
-              twitts.forEach(twitt => {                
-                twitt.user = users[Math.floor(Math.random() * NUMBER_OF_USERS)]
-              });
-              
-              this.twitts = twitts;
-              this.pending = false;
-            });
-
-        });
+      this.pending = false;
     },
   },
 }
