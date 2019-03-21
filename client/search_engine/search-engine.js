@@ -22,13 +22,20 @@ export default class SearchEngine {
         };
         var start = new Date()
         this.idx.search(query).forEach(index => {
+            // console.log(index);
+            var position = [];
+            if(index.matchData.metadata[query.toLowerCase()]) {
+                position = index.matchData.metadata[query.toLowerCase()].body.position;}
+
             results.twitts.push({
                 ...this.store[index.ref],
-                position: index.matchData.metadata[query].body.position
+                position: position,
+                score: index.score,
             })
         });      
         var time = new Date() - start
-        results.time = time;        
+        results.time = time;
+        console.log('Found ' + results.twitts.length + ' results in ' + time + ' Miliseconds');      
         return results;
     }
 }

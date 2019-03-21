@@ -5,7 +5,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts"/>
         
-        <twitts v-if="!pending" :twitts="paginateTwitts" :info="info"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" />
         </div>
@@ -40,6 +40,7 @@ export default {
         language: "",
       },
       pending: false,
+      page: 1,
       twitts: {},
     }
   },
@@ -53,6 +54,15 @@ export default {
       if(this.twitts.twitts) info.count = this.twitts.twitts.length;
       if(this.twitts.time) info.time = this.twitts.time;
       return info;
+    },
+    displayedTwitts() {
+      if(!this.twitts.twitts) return [];
+      var page = [];
+      for (let i = (this.page-1)*10; i < this.page*10; i++) {
+        if(this.twitts.twitts[i]) page.push(this.twitts.twitts[i])
+        else return page;
+      }
+      return page;
     }
   },
   created() {
@@ -62,17 +72,21 @@ export default {
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
     },
-    paginateTwitts(from, to) {
-      if(!this.twitts.twitts) return [];
-      this.pending = true;
-
-      var page = [];
-      for (let i = from; i < to; i++) {
-        page.push(this.twitts.twitts[i])
+    sortBy(type) {
+      switch (type) {
+        case 'match':
+          this.twitts.twitts.sort((a,b) => b.score - a.score);
+          break;
+        case 'lengthDsc':
+          this.twitts.twitts.sort((a,b) => b.body.length - a.body.length);
+          break;
+        case 'lengthAsc':
+          this.twitts.twitts.sort((a,b) => a.body.length - b.body.length);
+          break;
+      
+        default:
+          break;
       }
-
-      this.pending = false;
-      return page;
     },
     loadTwitts() {
       this.pending = true;
@@ -81,6 +95,11 @@ export default {
 
       this.pending = false;
     },
+    loadPage(index){
+      if(index - 1 < 1) index = 1;
+      if(index + 1 > 10) index = 10;
+      this.page = index;
+    }
   },
 }
 </script>
