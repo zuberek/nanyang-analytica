@@ -17,7 +17,7 @@ csv()
                     id: key.concat(entry.username),
                     body: entry[key],
                     username: entry.username,
-                    photo: 'https://source.unsplash.com/?face'
+                    photo: 'https://randomuser.me/api/portraits/lego/' + (Math.floor(Math.random() * 8)) + '.jpg',
                 });
             }
         });
@@ -37,7 +37,7 @@ csv()
             });
             store[entry.id] = {
                 username: entry.username,
-                photo: 'https://source.unsplash.com/?face',
+                photo: entry.photo,
                 body: entry.body,
             }
         }, this);

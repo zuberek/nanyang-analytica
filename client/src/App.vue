@@ -5,7 +5,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts"/>
         
-        <twitts v-if="!pending" :twitts="twitts"/>
+        <twitts v-if="!pending" :twitts="paginateTwitts" :info="info"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" />
         </div>
@@ -19,8 +19,7 @@ import Sidebar from './components/Sidebar.vue'
 import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
-import axios from 'axios';
-import SearchEngine from '../search_engine/engine.js';
+import SearchEngine from '../search_engine/search-engine.js';
 
 export default {
   name: 'app',
@@ -41,12 +40,20 @@ export default {
         language: "",
       },
       pending: false,
-      twitts: [],
+      twitts: {},
     }
   },
   params: {
     searchQuery: Object,
     sidebarOpen: Boolean,
+  },
+  computed: {
+    info() {
+      var info = {};
+      if(this.twitts.twitts) info.count = this.twitts.twitts.length;
+      if(this.twitts.time) info.time = this.twitts.time;
+      return info;
+    }
   },
   created() {
     SearchEngine.init();
@@ -54,6 +61,18 @@ export default {
   methods: {
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
+    },
+    paginateTwitts(from, to) {
+      if(!this.twitts.twitts) return [];
+      this.pending = true;
+
+      var page = [];
+      for (let i = from; i < to; i++) {
+        page.push(this.twitts.twitts[i])
+      }
+
+      this.pending = false;
+      return page;
     },
     loadTwitts() {
       this.pending = true;
@@ -82,6 +101,11 @@ export default {
   #page-wrap {
     margin-top: 100px;
   }
+}
+
+mark {
+  background-color: yellow !important;
+  color: black;
 }
 
 </style>
