@@ -5,6 +5,7 @@
         :crossIcon="false"
         :isOpen="isOpen"    
         @openMenu="set(true)"
+        @closeMenu="set(false)"
     >
         <div class="flex brand">
             <img height="100px" src="../assets/logo-white.png" alt="">
@@ -14,14 +15,14 @@
             </span>
         </div>
                 
-        <div class="row" v-bind:class="{ 'd-none': !isOpen }">
+        <div class="row" v-if="isOpen">
             <div class="col-12">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Search</label>
+                    <h5 class="text-uppercase">Search</h5>
+                    <div class="form-group ">
                         <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Gender</label>
+                        <label for="">Gender</label>
                         <select class="form-control" v-model="query.gender">
                             <option>Male</option>
                             <option>Female</option>
@@ -31,26 +32,38 @@
                         <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
                         <vue-slider v-model="query.age" :lazy="true"/>
                     </div>
+                    <button class="btn btn-info mb-2" @click="submit">Search</button>
+
+                    <h5 class="text-uppercase mt-4">data</h5>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="useStatic">
+                        <label class="form-check-label" for="exampleCheck1">Use preloaded data</label>
+                        <small class="form-text text-muted mt-0 mb-1">15k records</small>
+                    </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
-                        <small class="form-text text-muted mt-0 mb-1">Can take up to few minutes.</small>
+                        <small class="form-text text-muted mt-0 mb-1">1k, Can take up to few minutes to load.</small>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Language</label>
-                        <select class="form-control" v-model="fields.language">
-                            <option>English</option>
-                            <option>Spanish</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Location</label>
-                        <select class="form-control" v-model="fields.location">
-                            <option>Europe</option>
-                            <option>Asia</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-info" @click="submit">Submit</button>
+                    <div v-if="fields.dynamic">
+                        <div class="form-group">
+                            <label for="">Language</label>
+                            <select class="form-control" v-model="fields.language">
+                                <option>Any</option>
+                                <option>English</option>
+                                <option>Spanish</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Location</label>
+                            <select class="form-control" v-model="fields.location">
+                                <option>World</option>
+                                <option>Europe</option>
+                                <option>Asia</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-info mb-2" @click="submit">Load</button>
+                    </div>               
             </div>
         </div>
         
@@ -96,6 +109,16 @@ export default {
             this.load();
         }
     },
+    computed: {
+        useStatic: {
+            get: function () {
+                return !this.fields.dynamic
+            },
+            set: function (newValue) {
+                this.fields.dynamic = !newValue
+            }
+        }
+    }
 }
 </script>
 

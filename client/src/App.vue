@@ -38,8 +38,9 @@ export default {
         age: [0, 100],
       },
       dynamicFields: {
-        location: "",
-        language: "",      
+        dynamic: false,
+        location: "World",
+        language: "Any",      
       },
       pending: false,
       page: 1,
@@ -93,7 +94,18 @@ export default {
     loadTwitts() {
       this.pending = true;
 
-      this.twitts = SearchEngine.search(this.searchQuery.search);
+      var result = SearchEngine.search(this.searchQuery.search);
+
+      var { age, gender } = this.searchQuery;
+      age.sort((a,b) => a - b);
+      gender = gender.toLowerCase();      
+      
+      if (gender)
+        result.twitts = result.twitts.filter(twitt => twitt.gender === gender);
+      if(!(age[0] === 0 && age[1] === 100)) 
+        result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
+
+      this.twitts = result;
 
       this.pending = false;
     },

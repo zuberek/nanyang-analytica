@@ -13,7 +13,7 @@ csv()
     dataset.forEach(function(entry){
         Object.keys(entry).forEach(key => {
             if(key != 'username') {
-                var gender = Math.floor(Math.random()*2) > 1 ? 'male' : 'female';
+                var gender = Math.random() > 0.5 ? 'male' : 'female';
                 var age = Math.floor(Math.random()*60 + 20);
                 twittAsDocument.push({
                     id: key.concat(entry.username),

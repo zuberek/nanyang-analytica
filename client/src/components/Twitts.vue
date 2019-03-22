@@ -33,12 +33,14 @@
             <div v-for="(twitt, index) in twitts" :key="index" class="col-lg-6 col-12 mb-2">
                 <div class="card">
                     <div class="row m-4">
-                        <div class="col-sm-3 col-12">
+                        <div class="col-sm-4 col-12">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
-                            <h5 class="card-title mt-2">{{twitt.username}}</h5>
-                            <!-- <p>{{twitt.user.registered.date.substring(0, 10)}}</p> -->
+                            <h5 class="card-title mt-2 mb-0">
+                                {{twitt.username}}
+                            </h5>
+                            <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small>
                         </div>
-                        <div class="col-sm-9 col-12">
+                        <div class="col-sm-8 col-12">
                             <div class="card-body">
                                 <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
                                 <a href="#" class="btn btn-info">Go to user</a>
