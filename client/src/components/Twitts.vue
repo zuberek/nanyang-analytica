@@ -10,7 +10,7 @@
             
         </div>
     </div>
-    <div v-else class="list ">
+    <div v-else class="list">
         <div class="d-flex flex-row justify-content-between">
             <div class="mt-2">
                 <p v-if="info" class="font-weight-bold">Found {{info.count}} results in {{info.time}} Miliseconds</p>
@@ -21,26 +21,26 @@
                         Sort by
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" @click="sort('match')">Best Match</a>
-                        <a class="dropdown-item" @click="sort('lengthDsc')">Long to Short</a>
-                        <a class="dropdown-item" @click="sort('lengthAsc')">Short to Long</a>
+                        <a class="dropdown-item" @click="sort('match');loadPage(1)">Best Match</a>
+                        <a class="dropdown-item" @click="sort('lengthDsc');loadPage(1)">Long to Short</a>
+                        <a class="dropdown-item" @click="sort('lengthAsc');loadPage(1)">Short to Long</a>
                     </div>
                 </div>
             </div>
         </div>
         
         <div v-if="info.count>0"  class="text-center row">
-            <div v-for="(twitt, index) in twitts" :key="index" class="col-lg-6 col-12 mb-2">
+            <div v-for="(twitt, index) in twitts" :key="index" class="col-lg-6 mb-2" v-bind:class="{ 'col-6': open }" >
                 <div class="card">
                     <div class="row m-4">
-                        <div class="col-sm-4 col-12">
+                        <div class="col-sm-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
                             <h5 class="card-title mt-2 mb-0">
                                 {{twitt.username}}
                             </h5>
                             <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small>
                         </div>
-                        <div class="col-sm-8 col-12">
+                        <div class="col-sm-8 col-12" v-if="!open">
                             <div class="card-body">
                                 <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
                                 <a href="#" class="btn btn-info">Go to user</a>
@@ -87,11 +87,15 @@ export default {
             type: Function,
             required: true,
         },
+        open: {
+            type: Boolean,
+            required: true,
+        },
     },
     computed: {
         noOfPages () {
             var num = 0;
-            if(this.info.count) num = Math.floor(this.info.count/10);
+            if(this.info.count) num = Math.ceil(this.info.count/6);
             if(num > 10) num = 10;
             return num;
         },

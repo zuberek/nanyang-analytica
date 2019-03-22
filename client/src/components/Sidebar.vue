@@ -1,8 +1,7 @@
 <template>
-    <PushRotate 
+    <ScaleRotate 
         disableOutsideClick 
         noOverlay 
-        :crossIcon="false"
         :isOpen="isOpen"    
         @openMenu="set(true)"
         @closeMenu="set(false)"
@@ -38,7 +37,7 @@
                     <div class="form-check mb-2">
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="useStatic">
                         <label class="form-check-label" for="exampleCheck1">Use preloaded data</label>
-                        <small class="form-text text-muted mt-0 mb-1">15k records</small>
+                        <small class="form-text text-muted mt-0 mb-1">10k records</small>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
@@ -68,17 +67,17 @@
         </div>
         
 
-    </PushRotate>
+    </ScaleRotate>
 </template> 
 
 <script>
-import { PushRotate } from 'vue-burger-menu';
+import { ScaleRotate } from 'vue-burger-menu';
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
 
 export default {
     components: {
-        PushRotate,
+        ScaleRotate,
         VueSlider,
     },
     props: {

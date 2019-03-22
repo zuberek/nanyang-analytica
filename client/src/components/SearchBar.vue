@@ -1,5 +1,5 @@
 <template>
-  <div class="row" style="height:100px">
+  <div class="row" style="height:80px">
       <div class="col">
         <form
         action="#"
@@ -8,13 +8,16 @@
         >
             <input class="form-control" type="text" v-model="query.search" placeholder="Keyword"> 
         </form>
-        <span 
-            v-for="key in Object.keys(filteredQuery)" 
-            :key="key"
-            class="badge badge-info mx-2">
-                {{key}}: {{filteredQuery[key]}} | 
-                    <span @click="reset(key)"> X </span>
-        </span>
+        <div v-if="Object.keys(filteredQuery).length > 0" class="mb-4">
+            <span 
+                v-for="key in Object.keys(filteredQuery)" 
+                :key="key"
+                class="badge badge-info mx-2">
+                    {{key}}: {{filteredQuery[key]}} | 
+                        <span @click="reset(key)"> X </span>
+            </span>
+        </div>
+        
       </div>
   </div>
 </template>

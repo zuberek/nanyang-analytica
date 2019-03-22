@@ -1,13 +1,14 @@
 <template>
   <div id="app">
     <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts"/>
-    <main id="page-wrap">
+    <img class="logo-lion" src="./assets/logo-black.png" alt="">
+    <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts"/>
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen"/>
         <div v-else>
-          <loader class="whole-page" :loading="pending" />
+          <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
       </div>
     </main>
@@ -19,7 +20,7 @@ import Sidebar from './components/Sidebar.vue'
 import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
-import SearchEngine from '../search_engine/search-engine.js';
+import SearchEngine from '../backend/search/search-engine.js';
 
 export default {
   name: 'app',
@@ -42,7 +43,8 @@ export default {
         location: "World",
         language: "Any",      
       },
-      pending: false,
+      pending: true,
+      loadingText: 'Loading the data...',
       page: 1,
       twitts: {},
     }
@@ -61,15 +63,21 @@ export default {
     displayedTwitts() {
       if(!this.twitts.twitts) return [];
       var page = [];
-      for (let i = (this.page-1)*10; i < this.page*10; i++) {
+      for (let i = (this.page-1)*6; i < this.page*6; i++) {
         if(this.twitts.twitts[i]) page.push(this.twitts.twitts[i])
         else return page;
       }
       return page;
     }
   },
-  created() {
-    SearchEngine.init();
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        SearchEngine.init();
+        this.pending = false;
+        this.loadingText = 'We`re working on it...';
+      }, 1)
+		});
   },
   methods: {
     setSidebarOpen(bool) {
@@ -93,21 +101,23 @@ export default {
     },
     loadTwitts() {
       this.pending = true;
+      this.sidebarOpen = false;
+      setTimeout(() => {
+        var result = SearchEngine.search(this.searchQuery.search);
 
-      var result = SearchEngine.search(this.searchQuery.search);
+        var { age, gender } = this.searchQuery;
+        age.sort((a,b) => a - b);
+        gender = gender.toLowerCase();      
+        
+        if (gender)
+          result.twitts = result.twitts.filter(twitt => twitt.gender === gender);
+        if(!(age[0] === 0 && age[1] === 100)) 
+          result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
 
-      var { age, gender } = this.searchQuery;
-      age.sort((a,b) => a - b);
-      gender = gender.toLowerCase();      
-      
-      if (gender)
-        result.twitts = result.twitts.filter(twitt => twitt.gender === gender);
-      if(!(age[0] === 0 && age[1] === 100)) 
-        result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
+        this.twitts = result;
 
-      this.twitts = result;
-
-      this.pending = false;
+        this.pending = false;
+      }, 10)
     },
     loadPage(index){
       if(index - 1 < 1) index = 1;
@@ -131,7 +141,7 @@ export default {
 }
 
 @media only screen and (max-width: 1300px) {
-  #page-wrap {
+  .squizzer {
     margin-top: 100px;
   }
 }
@@ -139,6 +149,14 @@ export default {
 mark {
   background-color: yellow !important;
   color: black;
+}
+
+.logo-lion {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  height: 60px;
+  width: 60px;
 }
 
 </style>
