@@ -20,16 +20,20 @@ export default class SearchEngine {
             twitts: [],
             time: "",
         };
+
         var start = new Date()
         this.idx.search(query).forEach(index => {
-            // console.log(index);
-            var position = [];
-            if(index.matchData.metadata[query.toLowerCase()]) {
-                position = index.matchData.metadata[query.toLowerCase()].body.position;}
-
+            //console.log(index);
+            var positions = [];
+            Object.keys(index.matchData.metadata).forEach(key => {
+                index.matchData.metadata[key].body.position.forEach(position => {
+                    positions.push(position)  
+                });
+            });
+            positions.sort((a,b) => a[0]-b[0]);
             results.twitts.push({
                 ...this.store[index.ref],
-                position: position,
+                positions: positions,
                 score: index.score,
             })
         });      

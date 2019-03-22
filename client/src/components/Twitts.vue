@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-sm-9 col-12">
                             <div class="card-body">
-                                <high-light class="card-text" :text="twitt.body" :positions="twitt.position"/>
+                                <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
                                 <a href="#" class="btn btn-info">Go to user</a>
                             </div>
                         </div>

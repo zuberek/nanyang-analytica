@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :set="setSidebarOpen" :load="loadTwitts"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts"/>
     <main id="page-wrap">
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts"/>
@@ -36,8 +36,10 @@ export default {
         search: "",
         gender: "",
         age: [0, 100],
+      },
+      dynamicFields: {
         location: "",
-        language: "",
+        language: "",      
       },
       pending: false,
       page: 1,

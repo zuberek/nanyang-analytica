@@ -21,20 +21,6 @@
                         <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Language</label>
-                        <select class="form-control" v-model="query.language">
-                            <option>English</option>
-                            <option>Spanish</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Location</label>
-                        <select class="form-control" v-model="query.location">
-                            <option>Europe</option>
-                            <option>Asia</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="exampleInputEmail1">Gender</label>
                         <select class="form-control" v-model="query.gender">
                             <option>Male</option>
@@ -49,6 +35,20 @@
                         <input type="checkbox" class="form-check-input" id="exampleCheck1">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
                         <small class="form-text text-muted mt-0 mb-1">Can take up to few minutes.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Language</label>
+                        <select class="form-control" v-model="fields.language">
+                            <option>English</option>
+                            <option>Spanish</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Location</label>
+                        <select class="form-control" v-model="fields.location">
+                            <option>Europe</option>
+                            <option>Asia</option>
+                        </select>
                     </div>
                     <button class="btn btn-info" @click="submit">Submit</button>
             </div>
@@ -74,6 +74,10 @@ export default {
             required: true,
         },
         query: {
+            type: Object,
+            required: true,
+        },
+        fields: {
             type: Object,
             required: true,
         },
