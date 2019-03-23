@@ -61,7 +61,7 @@
                                 <option>Asia</option>
                             </select>
                         </div>
-                        <button class="btn btn-info mb-2" @click="submit">Load</button>
+                        <button class="btn btn-info mb-2" @click="loadDynamic()">Load</button>
                     </div>               
             </div>
         </div>
@@ -98,6 +98,10 @@ export default {
             required: true,
         },
         load: {
+            type: Function,
+            required: true,
+        },
+        loadDynamic: {
             type: Function,
             required: true,
         }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts" :loadDynamic="loadDynamicData"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
@@ -21,6 +21,7 @@ import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
+import Crawler from '../backend/crawler.js';
 
 export default {
   name: 'app',
@@ -123,6 +124,10 @@ export default {
       if(index - 1 < 1) index = 1;
       if(index + 1 > 10) index = 10;
       this.page = index;
+    },
+    loadDynamicData(){
+      Crawler.init();
+      Crawler.crawl(this.dynamicFields);
     }
   },
 }

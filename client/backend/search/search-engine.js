@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-import index from "./index.json";
-import store from "./store.json";
 import lunr from "lunr";
 
 export default class SearchEngine {
@@ -9,9 +7,9 @@ export default class SearchEngine {
 
     static init() {
         console.log('loading indexing...');
-        this.idx = lunr.Index.load(index);
+        this.idx = lunr.Index.load(require('./index.json'));
         console.log('loading store...');
-        this.store = store;
+        this.store = require('./store.json');
         console.log('loaded!');
     }
 
@@ -41,5 +39,10 @@ export default class SearchEngine {
         results.time = time;
         console.log('Found ' + results.twitts.length + ' results in ' + time + ' Miliseconds');      
         return results;
+    }
+
+    static load() {
+        this.index = {};
+        this.store = {};
     }
 }

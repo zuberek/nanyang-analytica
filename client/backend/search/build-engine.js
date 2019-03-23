@@ -27,7 +27,7 @@ csv()
         });
     });
 
-    var trimmed = twittAsDocument.slice(0,15000);
+    var trimmed = twittAsDocument.slice(0,10000);
     twittAsDocument = trimmed;
 
     // create the index and store
