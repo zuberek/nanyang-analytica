@@ -1,8 +1,10 @@
 <template>
-    <div style="width:200px; margin-top:20vh;" class="mx-auto">
-        <pacman-loader  :loading="loading" :color="'#5bc0de'" :size="'30px'"/>
-        <p class="mt-2">
-        {{ text }}</p>
+    <div class="d-flex justify-content-center mx-auto" style="width:200px; margin-top:20vh;">
+        <div>
+            <pacman-loader  :loading="loading" :color="'#5bc0de'" :size="'30px'" class="ml-3"/>
+            <p class="mt-2">
+            {{ text }}</p>
+        </div>
     </div>
 </template>
 
