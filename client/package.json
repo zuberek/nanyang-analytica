@@ -13,20 +13,20 @@
     "jquery": "^3.3.1",
     "lunr": "^2.3.6",
     "popper.js": "^1.14.7",
-    "twitter-extract-widgets": "^1.2.0",
-    "vue": "^2.6.6",
+    "twitter-extract-widgets": "^1.4.3",
+    "vue": "^2.6.10",
     "vue-burger-menu": "^2.0.1",
-    "vue-slider-component": "^3.0.16",
+    "vue-slider-component": "^3.0.21",
     "vue-spinner": "^1.0.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.5.0",
+    "@vue/cli-plugin-babel": "^3.5.3",
     "@vue/cli-plugin-eslint": "^3.5.0",
-    "@vue/cli-service": "^3.5.0",
+    "@vue/cli-service": "^3.5.3",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
     "root": true,
