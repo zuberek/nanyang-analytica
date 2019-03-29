@@ -17,7 +17,7 @@
             </div>
             <div class="mb-2">   
                 <div class="dropdown">
-                    <button class="btn btn-info dropdown-toggle mx-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-warning dropdown-toggle mx-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Sort by
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
@@ -36,23 +36,24 @@
                         <div class="col-sm-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
                             <h5 class="card-title mt-2 mb-0">
-                                {{twitt.username}}
+                                {{twitt.name}}
                             </h5>
-                            <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small>
+                            <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
+                            <small class="text-muted mt-0 mb-1">{{twitt.username}}</small>
                         </div>
                         <div class="col-sm-8 col-12" v-if="!open">
                             <div class="card-body">
                                 <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
-                                <a href="#" class="btn btn-info">Go to user</a>
+                                <a href="#" class="btn btn-warning">Go to user</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div> 
 
-            <nav class="col-12 d-flex justify-content-center" aria-label="Page navigation example">
-                <ul class="pagination text-center">
-                    <li class="page-item" v-for="(index) in noOfPages" :key="index">
+            <nav class="col-12 d-flex justify-content-center" aria-label="Page navigation example" >
+                <ul class="pagination text-center" style="cursor: pointer;">
+                    <li class="page-item" v-for="(index) in noOfPages" :key="index" >
                         <a class="page-link" @click="loadPage(index)">{{index}}</a>
                     </li>
                 </ul>

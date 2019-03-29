@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-content-center mx-auto" style="width:200px; margin-top:20vh;">
         <div>
-            <pacman-loader  :loading="loading" :color="'#5bc0de'" :size="'30px'" class="ml-3"/>
+            <pacman-loader  :loading="loading" :color="'#ffc107'" :size="'30px'" class="ml-3"/>
             <p class="mt-2">
             {{ text }}</p>
         </div>

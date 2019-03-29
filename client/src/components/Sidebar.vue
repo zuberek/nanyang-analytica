@@ -1,7 +1,8 @@
 <template>
     <ScaleRotate 
         disableOutsideClick 
-        noOverlay 
+        noOverlay
+        width="320"
         :isOpen="isOpen"    
         @openMenu="set(true)"
         @closeMenu="set(false)"
@@ -14,7 +15,7 @@
             </span>
         </div>
                 
-        <div class="row" v-if="isOpen">
+        <div class="row px-4" v-if="isOpen">
             <div class="col-12">
                     <h5 class="text-uppercase">Search</h5>
                     <div class="form-group ">
@@ -27,11 +28,17 @@
                             <option>Female</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
-                        <vue-slider v-model="query.age" :lazy="true"/>
+                        <vue-slider 
+                            :marks="true"
+                            :data="data" 
+                            v-model="query.age" 
+                            :lazy="true"
+                            :enable-cross="false"
+                        />
                     </div>
-                    <button class="btn btn-info mb-2" @click="submit">Search</button>
+                    <button class="btn btn-warning my-2" @click="submit">Search</button>
 
                     <h5 class="text-uppercase mt-4">data</h5>
                     <div class="form-check mb-2">
@@ -42,26 +49,47 @@
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
-                        <small class="form-text text-muted mt-0 mb-1">1k, Can take up to few minutes to load.</small>
+                        <!-- <small class="form-text text-muted mt-0 mb-1">Take up to few minutes to load.</small> -->
                     </div>
                     <div v-if="fields.dynamic">
-                        <div class="form-group">
-                            <label for="">Language</label>
-                            <select class="form-control" v-model="fields.language">
-                                <option>Any</option>
-                                <option>English</option>
-                                <option>Spanish</option>
-                            </select>
+                        <div class="form-group mt-2">
+                            <label for="">User Names</label>
+                            <input 
+                                class="form-control" 
+                                type="text" 
+                                placeholder="Username and space to add" 
+                                v-model="currUserName">
+                            <small 
+                                class="form-text mt-0 mb-1"
+                                style="cursor: pointer;"
+                                @click="preload">
+                            Preload usernames</small>
                         </div>
-                        <div class="form-group">
-                            <label for="">Location</label>
-                            <select class="form-control" v-model="fields.location">
-                                <option>World</option>
-                                <option>Europe</option>
-                                <option>Asia</option>
-                            </select>
+                        <div 
+                            v-if="splittedNames.length > 0" 
+                            class="row mb-4"
+                            style="max-width:300px;">
+                            <div v-for="(user) in splittedNames" :key="user.name" class="badge badge-warning m-1 badge-name">
+                                <input 
+                                    :size="user.name.length"
+                                    type="text" 
+                                    v-model="user.name">
+                                | <span @click="remove(user.name)" style="cursor: pointer;"> X </span>
+                            </div>
                         </div>
-                        <button class="btn btn-info mb-2" @click="loadDynamic()">Load</button>
+                        <div class="row justify-content-around">
+                            <button 
+                            class="btn btn-warning mb-2" 
+                            @click="loadDynamic(splittedNames.map(n=>n.name));loadText = 'Reload';">
+                            {{loadText}}</button>
+
+                            <button
+                                v-if="splittedNames.length>0"
+                                class="btn btn-warning mb-2" 
+                                @click="splittedNames=[]">
+                            Clear</button>
+                        </div>
+                        
                     </div>               
             </div>
         </div>
@@ -73,12 +101,40 @@
 <script>
 import { ScaleRotate } from 'vue-burger-menu';
 import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/antd.css'
 
 export default {
     components: {
         ScaleRotate,
         VueSlider,
+    },
+    data () {
+        return {
+            currUserName: '',
+            splittedNames: [],
+            data: [0, 18, 23, 42, 100],
+            loadText: 'Load',
+        }
+    },
+    methods: {
+        submit() {
+            this.set(false);
+            this.load();
+        },
+        preload() {
+            this.splittedNames = this.splittedNames.concat(['BarackObama', 'realDonaldTrump', 'HillaryClinton'].map(e => ({name: e})));
+        },
+        remove(name){
+            this.splittedNames = this.splittedNames.filter(n => n.name != name);
+        }
+    },
+    watch: {
+        currUserName: function (val) {
+            var elems = val.split(' ');
+            if(elems.length > 1){
+                this.splittedNames = this.splittedNames.concat(elems.filter(e => e.length > 0).map(e => ({name: e})));
+                this.currUserName = '';
+            }
+        },
     },
     props: {
         isOpen: {
@@ -106,12 +162,6 @@ export default {
             required: true,
         }
     },
-    methods: {
-        submit() {
-            this.set(false);
-            this.load();
-        }
-    },
     computed: {
         useStatic: {
             get: function () {
@@ -130,9 +180,160 @@ export default {
     font-size: 20px;
     font-weight: 900;
 }
-
 .bm-item-list {
     font-size: 15px;
+    margin-left: 0;
 }
+.badge-name input{
+    background-color: #ffc107;
+    border: 0;
+    outline: none;
+}
+.badge-name input:active{
+    border: 0;
+}
+.vue-slider-disabled .vue-slider-rail {
+  background-color: #ccc;
+}
+.vue-slider-disabled .vue-slider-dot-handle {
+  background-color: #666;
+}
+.vue-slider-disabled .vue-slider-process {
+  background-color: #666;
+}
+.vue-slider-disabled .vue-slider-mark-step {
+  background-color: #666;
+}
+.vue-slider-disabled .vue-slider-mark-step-active {
+  background-color: #ccc;
+}
+
+.vue-slider-rail {
+  background-color: #f1d39f;
+  border-radius: 15px;
+}
+
+.vue-slider-process {
+  background-color: #eeaa00;
+  color: #666;
+  border-radius: 15px;
+}
+
+.vue-slider-mark {
+  z-index: 4;
+}
+.vue-slider-mark-step {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #eeaa00;
+  /* background-color: #eeaa00; */
+}
+.vue-slider-mark-step-active {
+  background-color: #f1d39f;
+}
+
+.vue-slider-mark-label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.vue-slider-dot-handle {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #eeaa00;
+  box-sizing: border-box;
+}
+.vue-slider-dot-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  height: 200%;
+  background-color: rgba(238, 194, 0, 0.38);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: -1;
+  transition: transform 0.2s;
+}
+.vue-slider-dot-handle-focus::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.vue-slider-dot-handle-disabled {
+  cursor: not-allowed;
+  background-color: #666;
+}
+
+.vue-slider-dot-tooltip {
+  visibility: visible;
+}
+.vue-slider-dot-tooltip-show .vue-slider-dot-tooltip-inner {
+  opacity: 1;
+}
+.vue-slider-dot-tooltip-show .vue-slider-dot-tooltip-inner-top {
+  transform: rotateZ(-45deg);
+}
+.vue-slider-dot-tooltip-show .vue-slider-dot-tooltip-inner-bottom {
+  transform: rotateZ(135deg);
+}
+.vue-slider-dot-tooltip-show .vue-slider-dot-tooltip-inner-left {
+  transform: rotateZ(-135deg);
+}
+.vue-slider-dot-tooltip-show .vue-slider-dot-tooltip-inner-right {
+  transform: rotateZ(45deg);
+}
+
+.vue-slider-dot-tooltip-inner {
+  border-radius: 50% 50% 50% 0px;
+  background-color: #e09100;
+  color: #666;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s linear;
+}
+.vue-slider-dot-tooltip-inner-top {
+  transform: translate(0, 50%) scale(0.01) rotate(-45deg);
+}
+.vue-slider-dot-tooltip-inner-bottom {
+  transform: translate(0, -50%) scale(0.01) rotateZ(135deg);
+}
+.vue-slider-dot-tooltip-inner-left {
+  transform: translate(50%, 0) scale(0.01) rotateZ(-135deg);
+}
+.vue-slider-dot-tooltip-inner-right {
+  transform: translate(-50%, 0) scale(0.01) rotateZ(45deg);
+}
+.vue-slider-dot-tooltip-text {
+  font-size: 12px;
+  white-space: nowrap;
+  text-align: center;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+}
+
+.vue-slider-dot-tooltip-inner-top .vue-slider-dot-tooltip-text {
+  transform: rotateZ(45deg);
+}
+.vue-slider-dot-tooltip-inner-bottom .vue-slider-dot-tooltip-text {
+  transform: rotateZ(-135deg);
+}
+.vue-slider-dot-tooltip-inner-left .vue-slider-dot-tooltip-text {
+  transform: rotateZ(135deg);
+}
+.vue-slider-dot-tooltip-inner-right .vue-slider-dot-tooltip-text {
+  transform: rotateZ(-45deg);
+}
+
+/*# sourceMappingURL=material.css.map */
+
+
 </style>
 

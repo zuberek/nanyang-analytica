@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div id="top" class="top"></div>
     <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts" :loadDynamic="loadDynamicData"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
@@ -21,7 +22,7 @@ import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
-import Crawler from '../backend/crawler.js';
+import extract from "../backend/scrape/main";
 
 export default {
   name: 'app',
@@ -41,8 +42,6 @@ export default {
       },
       dynamicFields: {
         dynamic: false,
-        location: "World",
-        language: "Any",      
       },
       pending: true,
       loadingText: 'Loading the data...',
@@ -76,13 +75,19 @@ export default {
       setTimeout(() => {
         SearchEngine.init();
         this.pending = false;
-        this.loadingText = 'We`re working on it...';
       }, 1)
-		});
+    });
+    
+
   },
   methods: {
+    scrollToTop() {
+      console.log('gonna scroll up one day');
+      
+    },
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
+      this.scrollToTop();
     },
     sortBy(type) {
       switch (type) {
@@ -99,15 +104,14 @@ export default {
         default:
           break;
       }
+      this.scrollToTop();
     },
     loadTwitts() {
-      this.pending = true;
-      this.sidebarOpen = false;
+      this.start();
       setTimeout(() => {
         var result = SearchEngine.search(this.searchQuery.search);
 
         var { age, gender } = this.searchQuery;
-        age.sort((a,b) => a - b);
         gender = gender.toLowerCase();      
         
         if (gender)
@@ -118,17 +122,33 @@ export default {
         this.twitts = result;
 
         this.pending = false;
+        this.scrollToTop();
       }, 10)
     },
     loadPage(index){
       if(index - 1 < 1) index = 1;
       if(index + 1 > 10) index = 10;
       this.page = index;
+      this.scrollToTop();
     },
-    loadDynamicData(){
-      Crawler.init();
-      Crawler.crawl(this.dynamicFields);
-    }
+    loadDynamicData(usernames){
+      this.scrollToTop();
+      this.start('Fetching from Twitter...');
+      setTimeout(() => {
+        var config = { profiles: usernames }
+        extract(config).then(tweets => {
+          this.loadingText = 'Indexing your tweets...';
+          SearchEngine.load(tweets);
+          this.pending = false;
+        })
+      }, 10)
+    },
+    start(text){
+      this.pending = true;
+      this.sidebarOpen = false;
+      var loadText = (text) ? text : 'We`re working on it...';
+      this.loadingText = loadText;
+    },
   },
 }
 </script>
@@ -162,6 +182,14 @@ mark {
   top: 20px;
   height: 60px;
   width: 60px;
+}
+
+.top {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 10px;
+  width: 10px;
 }
 
 </style>

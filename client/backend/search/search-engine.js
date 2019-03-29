@@ -41,8 +41,37 @@ export default class SearchEngine {
         return results;
     }
 
-    static load() {
-        this.index = {};
-        this.store = {};
+    static load(data) {
+        var allTweets = [];
+        for (const user in data) {
+            allTweets = allTweets.concat(data[user]);
+        }
+
+        // shuffle
+        allTweets = allTweets.sort(() => Math.random() - 0.5)
+        
+        // create the index and store
+        var store = {};
+        var index = lunr(function(){
+            this.ref('id');
+            this.field('body');
+            this.metadataWhitelist = ['position']
+            
+            allTweets.forEach(function(entry){
+                this.add({
+                    id: entry.id,
+                    body: entry.body,
+                });
+                store[entry.id] = {
+                    username: entry.author.username,
+                    name: entry.author.name,
+                    photo: entry.author.img,
+                    body: entry.body,
+                }
+            }, this);
+        });
+
+        this.idx = index;
+        this.store = store;
     }
 }

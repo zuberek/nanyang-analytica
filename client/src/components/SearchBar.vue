@@ -12,9 +12,9 @@
             <span 
                 v-for="key in Object.keys(filteredQuery)" 
                 :key="key"
-                class="badge badge-info mx-2">
+                class="badge badge-warning mx-2">
                     {{key}}: {{filteredQuery[key]}} | 
-                        <span @click="reset(key)"> X </span>
+                        <span @click="reset(key)" style="cursor: pointer;"> X </span>
             </span>
         </div>
         
