@@ -49,10 +49,14 @@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
+            <div v-if="twitts.length<5" class="screen-pusher"></div>
 
             <nav class="col-12 d-flex justify-content-center" aria-label="Page navigation example" >
-                <ul class="pagination text-center" style="cursor: pointer;">
+                <ul class="pagination text-center" 
+                    style="cursor: pointer;"
+                    v-scroll-to="'.top'"
+                >
                     <li class="page-item" v-for="(index) in noOfPages" :key="index" >
                         <a class="page-link" @click="loadPage(index)">{{index}}</a>
                     </li>
@@ -107,5 +111,9 @@ export default {
 <style>
 .list {
     margin-top: -15px;
+}
+.screen-pusher {
+    height: 80vh;
+    width: 10px;
 }
 </style>

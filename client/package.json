@@ -16,6 +16,8 @@
     "twitter-extract-widgets": "^1.4.3",
     "vue": "^2.6.10",
     "vue-burger-menu": "^2.0.1",
+    "vue-directive-tooltip": "^1.5.1",
+    "vue-scroll-to": "^2.2.1",
     "vue-slider-component": "^3.0.21",
     "vue-spinner": "^1.0.3"
   },

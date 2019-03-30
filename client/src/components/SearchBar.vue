@@ -6,7 +6,7 @@
         method="post"
         @submit.prevent="load"
         >
-            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword"> 
+            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" oninput @input="load"> 
         </form>
         <div v-if="Object.keys(filteredQuery).length > 0" class="mb-4">
             <span 

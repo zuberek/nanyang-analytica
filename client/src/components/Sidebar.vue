@@ -38,15 +38,25 @@
                             :enable-cross="false"
                         />
                     </div>
-                    <button class="btn btn-warning my-2" @click="submit">Search</button>
+                    <button 
+                      class="btn btn-warning my-2" 
+                      @click="submit"
+                      v-scroll-to="'.top'"
+                    >Search</button>
 
                     <h5 class="text-uppercase mt-4">data</h5>
-                    <div class="form-check mb-2">
+                    <div 
+                      class="form-check mb-2"
+                      v-tooltip.right="'Use our preprepared data of random Twitter users.'"
+                    >
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="useStatic">
                         <label class="form-check-label" for="exampleCheck1">Use preloaded data</label>
                         <small class="form-text text-muted mt-0 mb-1">10k records</small>
                     </div>
-                    <div class="form-check">
+                    <div 
+                      class="form-check"
+                      v-tooltip.right="'Input your own usernames and let us analyze it for you.'"
+                    >
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
                         <!-- <small class="form-text text-muted mt-0 mb-1">Take up to few minutes to load.</small> -->
@@ -58,12 +68,16 @@
                                 class="form-control" 
                                 type="text" 
                                 placeholder="Username and space to add" 
-                                v-model="currUserName">
+                                v-model="currUserName"
+                                v-tooltip.right="'Type in an username and press space to add.'"
+                            >
                             <small 
                                 class="form-text mt-0 mb-1"
                                 style="cursor: pointer;"
-                                @click="preload">
-                            Preload usernames</small>
+                                @click="preload"
+                              >
+                              Click me to preload some usernames
+                            </small>
                         </div>
                         <div 
                             v-if="splittedNames.length > 0" 
@@ -80,8 +94,11 @@
                         <div class="row justify-content-around">
                             <button 
                             class="btn btn-warning mb-2" 
-                            @click="loadDynamic(splittedNames.map(n=>n.name));loadText = 'Reload';">
-                            {{loadText}}</button>
+                            @click="loadDynamic(splittedNames.map(n=>n.name));loadText = 'Reload';"
+                            v-scroll-to="'.top'"
+                            >
+                              {{loadText}}
+                            </button>
 
                             <button
                                 v-if="splittedNames.length>0"
@@ -121,7 +138,7 @@ export default {
             this.load();
         },
         preload() {
-            this.splittedNames = this.splittedNames.concat(['BarackObama', 'realDonaldTrump', 'HillaryClinton'].map(e => ({name: e})));
+            this.splittedNames = this.splittedNames.concat(['BarackObama', 'realDonaldTrump', 'HillaryClinton', 'BillClinton'].map(e => ({name: e})));
         },
         remove(name){
             this.splittedNames = this.splittedNames.filter(n => n.name != name);
@@ -181,8 +198,8 @@ export default {
     font-weight: 900;
 }
 .bm-item-list {
-    font-size: 15px;
-    margin-left: 0;
+    font-size: 15px !important;
+    margin-left: 0 !important;
 }
 .badge-name input{
     background-color: #ffc107;

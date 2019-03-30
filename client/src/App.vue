@@ -23,6 +23,7 @@ import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
 import extract from "../backend/scrape/main";
+import { setTimeout } from 'timers';
 
 export default {
   name: 'app',
@@ -81,13 +82,9 @@ export default {
 
   },
   methods: {
-    scrollToTop() {
-      console.log('gonna scroll up one day');
-      
-    },
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
-      this.scrollToTop();
+      
     },
     sortBy(type) {
       switch (type) {
@@ -104,7 +101,7 @@ export default {
         default:
           break;
       }
-      this.scrollToTop();
+      
     },
     loadTwitts() {
       this.start();
@@ -121,25 +118,27 @@ export default {
 
         this.twitts = result;
 
-        this.pending = false;
-        this.scrollToTop();
+        setTimeout(() => {
+          this.pending = false;
+        },500)
+        
       }, 10)
     },
     loadPage(index){
       if(index - 1 < 1) index = 1;
       if(index + 1 > 10) index = 10;
       this.page = index;
-      this.scrollToTop();
+      
     },
     loadDynamicData(usernames){
-      this.scrollToTop();
+      
       this.start('Fetching from Twitter...');
       setTimeout(() => {
         var config = { profiles: usernames }
         extract(config).then(tweets => {
           this.loadingText = 'Indexing your tweets...';
           SearchEngine.load(tweets);
-          this.pending = false;
+          this.loadTwitts();
         })
       }, 10)
     },
