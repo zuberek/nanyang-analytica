@@ -6,6 +6,7 @@ function getConfig (cfg) {
   config.showAuthor = (typeof cfg.showAuthor !== 'undefined') ? cfg.showAuthor : true
   config.showRetweets = (typeof cfg.showRetweets !== 'undefined') ? cfg.showRetweets : true
   config.showMedia = (typeof cfg.showMedia !== 'undefined') ? cfg.showMedia : true
+  config.showEmpty = (typeof cfg.showEmpty !== 'undefined') ? cfg.showEmpty : true
   config.noOfTweets = (cfg.noOfTweets) ? cfg.noOfTweets : 20
   config.browser = (typeof window !== 'undefined')
   config.lang = (cfg.lang) ? cfg.lang : 'en'

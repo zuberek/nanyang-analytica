@@ -149,7 +149,7 @@ export default {
       
       this.start('Fetching from Twitter...');
       setTimeout(() => {
-        var config = { profiles: usernames, showRetweets: false }
+        var config = { profiles: usernames, showRetweets: false, showEmpty: false }
         extract(config).then(tweets => {
           this.loadingText = 'Indexing your tweets...';
           SearchEngine.load(tweets);

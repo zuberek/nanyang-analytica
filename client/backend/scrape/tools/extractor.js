@@ -4,6 +4,7 @@ var Extractor = function (config) {
   this.showAuthor = config.showAuthor
   this.showRetweets = config.showRetweets
   this.showMedia = config.showMedia
+  this.showEmpty = config.showEmpty
 }
 
 Extractor.prototype.extract = function (body) {
@@ -47,7 +48,7 @@ Extractor.prototype.extract = function (body) {
           if (tweet.media.length === 0) delete tweet.media
         }
       }
-      tweets.push(tweet)
+      if(tweet.body || self.showEmpty) tweets.push(tweet)
     }
   })
   return tweets

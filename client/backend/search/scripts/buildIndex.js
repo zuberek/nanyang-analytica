@@ -1,66 +1,40 @@
 const lunr = require('lunr');
+const data = require('../../data/data.json')
+const fs =  require("fs")
 
-module.exports = function index
+var dataset = []
+// dataset = data.slice(0,50000);
+dataset = data.sort(() => Math.random() - 0.5);
 
-
-csv()
-.fromFile(csvFilePath)
-.then((dataset)=>{
-
-    // preprocess
-    // each twitt as a separate document instead of each user
-    var twittAsDocument = [];
-    dataset.forEach(function(entry){
-        Object.keys(entry).forEach(key => {
-            if(key != 'username') {
-                var gender = Math.random() > 0.5 ? 'male' : 'female';
-                var age = Math.floor(Math.random()*60 + 20);
-                twittAsDocument.push({
-                    id: key.concat(entry.username),
-                    body: entry[key],
-                    username: entry.username,
-                    photo: 'https://randomuser.me/api/portraits/lego/' + (Math.floor(Math.random() * 8)) + '.jpg',
-                    gender,
-                    age,
-                });
-            }
-        });
-    });
-
-    var trimmed = twittAsDocument.slice(0,10000);
-    twittAsDocument = trimmed;
-
-    // create the index and store
-    var store = {};
-    var index = lunr(function(){
-        this.ref('id');
-        this.field('body');
-        this.field('age');
-        this.field('gender');
-        this.metadataWhitelist = ['position']
-        
-        twittAsDocument.forEach(function(entry){
-            this.add({
-                id: entry.id,
-                body: entry.body,
-                age: entry.age,
-                gender: entry.gender,
-            });
-            store[entry.id] = {
-                username: entry.username,
-                photo: entry.photo,
-                body: entry.body,
-                gender: entry.gender,
-                age: entry.age,
-            }
-        }, this);
-    });
-
-    // save
-    var indexJSON = JSON.stringify(index); 
-    fs.writeFileSync('index.json', indexJSON); 
+// create the index and store
+var store = {} 
+var index = lunr(function(){
+    this.ref('id');
+    this.field('body');
+    this.field('name');
+    this.metadataWhitelist = ['position']
     
-    var storeJSON = JSON.stringify(store); 
-    fs.writeFileSync('store.json', storeJSON); 
-})
+    dataset.forEach(function(entry){
+        this.add({
+            id: entry.id,
+            body: entry.body,
+            name: entry.author.name,
+        });
+        store[entry.id] = {
+            username: entry.author.username,
+            name: entry.author.name,
+            profile: entry.author.link,
+            photo: entry.author.img,
+            time: entry.time,
+            link: entry.link,
+            body: entry.body,
+        }
+    }, this);
+});
 
+// save
+var indexJSON = JSON.stringify(index); 
+fs.writeFileSync('../index.json', indexJSON); 
+
+var storeJSON = JSON.stringify(store); 
+fs.writeFileSync('../store.json', storeJSON); 
