@@ -117,6 +117,7 @@ export default {
           result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
 
         this.twitts = result;
+        this.page = 1,
 
         setTimeout(() => {
           this.pending = false;
