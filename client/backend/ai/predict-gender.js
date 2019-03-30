@@ -6,9 +6,9 @@ import * as tf from '@tensorflow/tfjs'
 const NUMBER_OF_CHARS = 92;
 const TWEET_LENGTH = 60;
 
-function preprocess(){
+async function preprocess(){
     // group tweets by user
-    const dataset = require('../data/data.json').slice(0, 10);
+    const dataset = require('../data/data.json').slice(0, 200);
 
     var userTweets = {};
     dataset.forEach(tweet => {
@@ -19,12 +19,20 @@ function preprocess(){
 
     for (const user in userTweets) {
         var tweets = userTweets[user];
-
-        tweets = tweets.map(tweet => {
+        userTweets[user] = tweets.map(tweet => {
             tweet = encode(tweet);
             return tweet;
         })
     }
+
+    console.log(userTweets);    
+
+    // const model = await tf.loadLayersModel("https://storage.googleapis.com/tfjs-examples/mnist-acgan/dist/generator/model.json")
+    const model = await tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/ai/models/simple/model.json")
+    // const model = await tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/ai/models/gender_classification/model.json")
+    // const model = await tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/gh-pages/serve/gender_classification/model.json")
+    console.log('loaded!');    
+
 }
 
 function test() {
@@ -40,7 +48,7 @@ function encode(tweet) {
     chars = tf.oneHot(chars, NUMBER_OF_CHARS); // vectorize
     var padding = [[0, Math.abs(60 - chars.shape[0])] , [0,0]] // [[firstD] , [secondD]]
     chars = chars.pad(padding); // 
-    console.log(chars.shape);   
+    // console.log(chars.shape);   
     return chars;
 }
 

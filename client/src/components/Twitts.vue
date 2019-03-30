@@ -8,7 +8,7 @@
                 or go to options
             </span>
             <br><br>
-            <button class="btn btn-warning" @click="runAI">FUCK WITH AI!</button>
+            <button class="btn btn-warning" @click="runAI">FUCK THE AI!</button>
             
         </div>
     </div>

@@ -68,7 +68,7 @@ csv()
                     // save
                     console.log('finished all');
                     var allTweetsJSON = JSON.stringify(allTweets); 
-                    fs.writeFileSync('../data.json', allTweetsJSON);
+                    fs.writeFileSync('../../data/data.json', allTweetsJSON);
                     
                     console.log('failed users:');
                     console.log(failedUsers);
