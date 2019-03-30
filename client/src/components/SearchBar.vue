@@ -54,6 +54,9 @@ export default {
             if(this.query.age[0] === 0 && this.query.age[1] === 100) 
                 delete filteredQuery.age;
             return filteredQuery;
+        },
+        mobile() {
+            return this.windowWidth < 800;
         }
     },
     methods: {

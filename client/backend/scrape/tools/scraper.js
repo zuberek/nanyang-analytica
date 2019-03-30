@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */ 
 const Extractor = require('./extractor')
 const https = require('./fetchers/https')
 const scriptTag = require('./fetchers/scriptTag')

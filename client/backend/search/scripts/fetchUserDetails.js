@@ -1,5 +1,5 @@
 /* eslint no-console: 0 */ 
-const csvFilePath = 'dataset.min.csv';
+const csvFilePath = '../../data/dataset.min.csv';
 const csv = require('csvtojson');
 const fs =  require("fs");
 const extract = require('../../scrape/main');

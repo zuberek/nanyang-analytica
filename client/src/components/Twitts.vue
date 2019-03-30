@@ -7,6 +7,8 @@
                 To search Twitter type in a keyword <br>
                 or go to options
             </span>
+            <br><br>
+            <button class="btn btn-warning" @click="runAI">FUCK WITH AI!</button>
             
         </div>
     </div>
@@ -67,8 +69,18 @@
 </template>
 
 <script>
+import { preprocess, test } from '../../backend/ai/predict-gender.js'
 export default {
     name: 'twitts',
+    methods: {
+        runAI() {
+            // eslint-disable-next-line no-console
+            console.log('fucking');
+            preprocess();
+            // console.log('test');
+            // test();
+        }
+    },
     props: {
         twitts: {
             type: Array,
