@@ -77,9 +77,9 @@
                               <div class="input-group-append">
                                 <button 
                                 class="btn btn-outline-warning" 
-                                v-tooltip.right="{ content: 'Generate random usernames', visible: !mobile }"
+                                v-tooltip.right="{ content: 'Get some random usernames', visible: !mobile }"
                                 @click="preload">
-                                Generate</button>
+                                Random</button>
                               </div>
                             </div>
                         </div>

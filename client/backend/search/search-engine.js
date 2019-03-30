@@ -22,13 +22,7 @@ export default class SearchEngine {
         var start = new Date()
         this.idx.search(query).forEach(index => {
             //console.log(index);
-            var positions = [];
-            Object.keys(index.matchData.metadata).forEach(key => {
-                index.matchData.metadata[key].body.position.forEach(position => {
-                    positions.push(position)  
-                });
-            });
-            positions.sort((a,b) => a[0]-b[0]);
+            var positions = index.matchData;
             results.twitts.push({
                 ...this.store[index.ref],
                 positions: positions,
@@ -64,6 +58,7 @@ export default class SearchEngine {
                 this.add({
                     id: entry.id,
                     body: entry.body,
+                    name: entry.author.name,
                 });
                 store[entry.id] = {
                     username: entry.author.username,

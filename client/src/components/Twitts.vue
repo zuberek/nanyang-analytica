@@ -35,16 +35,14 @@
                     <div class="row m-4">
                         <div class="col-sm-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
-                            <h5 class="card-title mt-2 mb-0">
-                                {{twitt.name}}
-                            </h5>
+                            <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
                             <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
                             <small class="text-muted mt-0 mb-1">{{twitt.username}}, {{twitt.time}}</small>
                              
                         </div>
                         <div class="col-sm-8 col-12" v-if="!open">
                             <div class="card-body">
-                                <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
+                                <p class="card-text" v-html="twitt.body"/>
                                 <a :href="twitt.link" rel="noopener noreferrer" target="_blank" class="btn btn-warning">Go to tweet</a>
                             </div>
                         </div>
@@ -69,13 +67,8 @@
 </template>
 
 <script>
-import HighLight from '../utils/HighlightText.vue'
-
 export default {
     name: 'twitts',
-    components: {
-        HighLight,
-    },
     props: {
         twitts: {
             type: Array,
@@ -101,7 +94,7 @@ export default {
     computed: {
         noOfPages () {
             var num = 0;
-            if(this.info.count) num = Math.ceil(this.info.count/6);
+            if(this.info.count) num = Math.ceil(this.info.count/8);
             if(num > 10) num = 10;
             return num;
         },
@@ -111,10 +104,10 @@ export default {
 
 <style>
 .list {
-    margin-top: -15px;
+    margin-top: 5px;
 }
 .screen-pusher {
-    height: 80vh;
+    height: 90vh;
     width: 10px;
 }
 </style>

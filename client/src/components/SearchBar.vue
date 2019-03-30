@@ -6,7 +6,10 @@
         method="post"
         @submit.prevent="load"
         >
-            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" oninput @input="load"> 
+            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load" @focus="show=true" @blur="show=false">
+            <small v-if="show" class="form-text text-muted my-0">
+                You can just type or specify the field like so - 'name:Kate'. Fields: (name, body) | Note: ONLY WHEN LOADED DYNAMICALLY
+            </small>
         </form>
         <div v-if="Object.keys(filteredQuery).length > 0" class="mb-4">
             <span 
@@ -25,6 +28,11 @@
 <script>
 export default {
     name: 'searchBar',
+    data () {
+        return {
+            show: false,
+        }
+    },
     props: {
         query: {
             type: Object,

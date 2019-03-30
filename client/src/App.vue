@@ -24,6 +24,7 @@ import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
 import extract from "../backend/scrape/main";
 import { setTimeout } from 'timers';
+import returnMarked from "./utils/returnMarked.js";
 
 export default {
   name: 'app',
@@ -42,7 +43,7 @@ export default {
         age: [0, 100],
       },
       dynamicFields: {
-        dynamic: false,
+        dynamic: true,
       },
       pending: true,
       loadingText: 'Loading the data...',
@@ -65,11 +66,10 @@ export default {
     displayedTwitts() {
       if(!this.twitts.twitts) return [];
       var page = [];
-      for (let i = (this.page-1)*6; i < this.page*6; i++) {
+      for (let i = (this.page-1)*8; i < this.page*8; i++) {
         if(this.twitts.twitts[i]) page.push(this.twitts.twitts[i])
-        else return page;
       }
-      return page;
+      return page.map(t => returnMarked(t.positions, t));
     },
     mobile() {
       return this.windowWidth < 800;
@@ -126,6 +126,7 @@ export default {
         this.twitts = result;
         this.page = 1,
 
+        // cool off
         setTimeout(() => {
           this.pending = false;
         },500)
