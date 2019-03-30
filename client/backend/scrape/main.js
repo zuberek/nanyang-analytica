@@ -19,7 +19,9 @@ function extract (userConfig) {
         .then(tweets => {
           alltweets[profile] = tweets.slice(0, appConfig.noOfTweets)
 
-          if (checkIfFinished(userConfig, alltweets)) resolve(alltweets)
+          if (checkIfFinished(userConfig, alltweets)) {
+            resolve(alltweets);
+          }
         })
     })
   })

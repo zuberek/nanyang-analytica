@@ -31,7 +31,7 @@
         
         <div v-if="info.count>0"  class="text-center row">
             <div v-for="(twitt, index) in twitts" :key="index" class="col-lg-6 mb-2" v-bind:class="{ 'col-6': open }" >
-                <div class="card">
+                <div class="card hoverable">
                     <div class="row m-4">
                         <div class="col-sm-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
@@ -39,12 +39,13 @@
                                 {{twitt.name}}
                             </h5>
                             <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
-                            <small class="text-muted mt-0 mb-1">{{twitt.username}}</small>
+                            <small class="text-muted mt-0 mb-1">{{twitt.username}}, {{twitt.time}}</small>
+                             
                         </div>
                         <div class="col-sm-8 col-12" v-if="!open">
                             <div class="card-body">
                                 <high-light class="card-text" :text="twitt.body" :positions="twitt.positions"/>
-                                <a href="#" class="btn btn-warning">Go to user</a>
+                                <a :href="twitt.link" rel="noopener noreferrer" target="_blank" class="btn btn-warning">Go to tweet</a>
                             </div>
                         </div>
                     </div>

@@ -14,6 +14,7 @@
     "lunr": "^2.3.6",
     "popper.js": "^1.14.7",
     "twitter-extract-widgets": "^1.4.3",
+    "v-click-outside": "^2.0.2",
     "vue": "^2.6.10",
     "vue-burger-menu": "^2.0.1",
     "vue-directive-tooltip": "^1.5.1",

@@ -13,6 +13,9 @@ import vueScrollTo from 'vue-scroll-to';
 // }
 Vue.use(vueScrollTo);
 
+import vClickOutside from 'v-click-outside'
+Vue.use(vClickOutside)
+
 Vue.config.productionTip = false
 
 new Vue({

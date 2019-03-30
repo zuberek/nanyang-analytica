@@ -1,11 +1,11 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'mobile': mobile }">
     <div id="top" class="top"></div>
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts" :loadDynamic="loadDynamicData"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts" :loadDynamic="loadDynamicData" :mobile="mobile"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
-        <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts"/>
+        <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts" />
         
         <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen"/>
         <div v-else>
@@ -48,6 +48,7 @@ export default {
       loadingText: 'Loading the data...',
       page: 1,
       twitts: {},
+      windowWidth: window.innerWidth,
     }
   },
   params: {
@@ -69,6 +70,9 @@ export default {
         else return page;
       }
       return page;
+    },
+    mobile() {
+      return this.windowWidth < 800;
     }
   },
   mounted() {
@@ -76,7 +80,10 @@ export default {
       setTimeout(() => {
         SearchEngine.init();
         this.pending = false;
-      }, 1)
+      }, 1);
+      window.addEventListener('resize', () => {
+        this.windowWidth = window.innerWidth;
+      });
     });
     
 
@@ -135,7 +142,7 @@ export default {
       
       this.start('Fetching from Twitter...');
       setTimeout(() => {
-        var config = { profiles: usernames }
+        var config = { profiles: usernames, showRetweets: false }
         extract(config).then(tweets => {
           this.loadingText = 'Indexing your tweets...';
           SearchEngine.load(tweets);
@@ -192,4 +199,14 @@ mark {
   width: 10px;
 }
 
+.hoverable {
+  transition: all 0.3s ease-in-out;
+  background-color: #f1f1f1;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.02);
+}
+
+.hoverable:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
 </style>

@@ -47,8 +47,8 @@ Extractor.prototype.extract = function (body) {
           if (tweet.media.length === 0) delete tweet.media
         }
       }
+      tweets.push(tweet)
     }
-    tweets.push(tweet)
   })
   return tweets
 }

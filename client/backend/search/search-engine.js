@@ -47,6 +47,8 @@ export default class SearchEngine {
             allTweets = allTweets.concat(data[user]);
         }
 
+        console.log(allTweets);
+
         // shuffle
         allTweets = allTweets.sort(() => Math.random() - 0.5)
         
@@ -55,6 +57,7 @@ export default class SearchEngine {
         var index = lunr(function(){
             this.ref('id');
             this.field('body');
+            this.field('name');
             this.metadataWhitelist = ['position']
             
             allTweets.forEach(function(entry){
@@ -65,7 +68,10 @@ export default class SearchEngine {
                 store[entry.id] = {
                     username: entry.author.username,
                     name: entry.author.name,
+                    profile: entry.author.link,
                     photo: entry.author.img,
+                    time: entry.time,
+                    link: entry.link,
                     body: entry.body,
                 }
             }, this);

@@ -1,11 +1,13 @@
 <template>
     <ScaleRotate 
-        disableOutsideClick 
+        disableOutsideClick
         noOverlay
+        :crossIcon="false"
         width="320"
         :isOpen="isOpen"    
+        v-click-outside="close"
         @openMenu="set(true)"
-        @closeMenu="set(false)"
+        @closeMenu="close"
     >
         <div class="flex brand">
             <img height="100px" src="../assets/logo-white.png" alt="">
@@ -47,7 +49,7 @@
                     <h5 class="text-uppercase mt-4">data</h5>
                     <div 
                       class="form-check mb-2"
-                      v-tooltip.right="'Use our preprepared data of random Twitter users.'"
+                      v-tooltip.right="{ content: 'Use our preprepared data of random Twitter users.', visible: !mobile }"
                     >
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="useStatic">
                         <label class="form-check-label" for="exampleCheck1">Use preloaded data</label>
@@ -55,7 +57,7 @@
                     </div>
                     <div 
                       class="form-check"
-                      v-tooltip.right="'Input your own usernames and let us analyze it for you.'"
+                      v-tooltip.right="{ content: 'Input your own usernames and let us analyze it for you.', visible: !mobile }"
                     >
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
@@ -64,37 +66,37 @@
                     <div v-if="fields.dynamic">
                         <div class="form-group mt-2">
                             <label for="">User Names</label>
-                            <input 
-                                class="form-control" 
-                                type="text" 
-                                placeholder="Username and space to add" 
-                                v-model="currUserName"
-                                v-tooltip.right="'Type in an username and press space to add.'"
-                            >
-                            <small 
-                                class="form-text mt-0 mb-1"
-                                style="cursor: pointer;"
-                                @click="preload"
+                            <div class="input-group">
+                              <input 
+                                  class="form-control" 
+                                  type="text" 
+                                  placeholder="Usernames" 
+                                  v-model="currUserName"
+                                  v-tooltip.right="{ content: 'Type in an username and press space to add', visible: !mobile }"
                               >
-                              Click me to preload some usernames
-                            </small>
+                              <div class="input-group-append">
+                                <button 
+                                class="btn btn-outline-warning" 
+                                v-tooltip.right="{ content: 'Generate random usernames', visible: !mobile }"
+                                @click="preload">
+                                Generate</button>
+                              </div>
+                            </div>
                         </div>
                         <div 
                             v-if="splittedNames.length > 0" 
                             class="row mb-4"
                             style="max-width:300px;">
-                            <div v-for="(user) in splittedNames" :key="user.name" class="badge badge-warning m-1 badge-name">
-                                <input 
-                                    :size="user.name.length"
-                                    type="text" 
-                                    v-model="user.name">
-                                | <span @click="remove(user.name)" style="cursor: pointer;"> X </span>
+                            <div v-for="(name) in splittedNames" :key="name" class="badge badge-warning m-1 badge-name">
+                                <span>
+                                    {{ name }} </span>
+                                | <span @click="remove(name)" style="cursor: pointer;"> X </span>
                             </div>
                         </div>
                         <div class="row justify-content-around">
                             <button 
                             class="btn btn-warning mb-2" 
-                            @click="loadDynamic(splittedNames.map(n=>n.name));loadText = 'Reload';"
+                            @click="loadDynamic(splittedNames);loadText = 'Reload';"
                             v-scroll-to="'.top'"
                             >
                               {{loadText}}
@@ -117,7 +119,8 @@
 
 <script>
 import { ScaleRotate } from 'vue-burger-menu';
-import VueSlider from 'vue-slider-component'
+import VueSlider from 'vue-slider-component';
+import randomUsers from "../utils/randomUsers.js";
 
 export default {
     components: {
@@ -138,17 +141,24 @@ export default {
             this.load();
         },
         preload() {
-            this.splittedNames = this.splittedNames.concat(['BarackObama', 'realDonaldTrump', 'HillaryClinton', 'BillClinton'].map(e => ({name: e})));
+          this.splittedNames = this.splittedNames.concat(
+            randomUsers
+              .filter(u => !this.splittedNames.includes(u))
+              .sort(() => Math.random() - 0.5)
+              .slice(0,10));
         },
         remove(name){
-            this.splittedNames = this.splittedNames.filter(n => n.name != name);
+            this.splittedNames = this.splittedNames.filter(n => n != name);
+        },
+        close(){
+          this.set(false);
         }
     },
     watch: {
         currUserName: function (val) {
             var elems = val.split(' ');
             if(elems.length > 1){
-                this.splittedNames = this.splittedNames.concat(elems.filter(e => e.length > 0).map(e => ({name: e})));
+                this.splittedNames = this.splittedNames.concat(elems.filter(e => e.length > 0));
                 this.currUserName = '';
             }
         },
@@ -177,17 +187,21 @@ export default {
         loadDynamic: {
             type: Function,
             required: true,
+        },
+        mobile: {
+            type: Boolean,
+            required: true,
         }
     },
     computed: {
-        useStatic: {
-            get: function () {
-                return !this.fields.dynamic
-            },
-            set: function (newValue) {
-                this.fields.dynamic = !newValue
-            }
+      useStatic: {
+        get: function () {
+          return !this.fields.dynamic
+        },
+        set: function (newValue) {
+          this.fields.dynamic = !newValue
         }
+      }
     }
 }
 </script>
