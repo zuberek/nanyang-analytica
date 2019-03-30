@@ -53,7 +53,7 @@
                     >Search</button>
 
                     <h5 class="text-uppercase mt-4">data</h5>
-                    <div 
+                    <!-- <div 
                       class="form-check mb-2"
                       v-tooltip.right="{ content: 'Use our preprepared data of random Twitter users.', visible: !mobile }"
                     >
@@ -67,9 +67,8 @@
                     >
                         <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="fields.dynamic">
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
-                        <!-- <small class="form-text text-muted mt-0 mb-1">Take up to few minutes to load.</small> -->
-                    </div>
-                    <div v-if="fields.dynamic">
+                    </div> -->
+                    <div>
                         <div class="form-group mt-2">
                             <label for="">User Names</label>
                             <div class="input-group">
@@ -175,10 +174,6 @@ export default {
             required: true,
         },
         query: {
-            type: Object,
-            required: true,
-        },
-        fields: {
             type: Object,
             required: true,
         },

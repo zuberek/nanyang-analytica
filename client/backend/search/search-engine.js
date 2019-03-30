@@ -40,12 +40,11 @@ export default class SearchEngine {
         for (const user in data) {
             allTweets = allTweets.concat(data[user]);
         }
-
-        console.log(allTweets);
-
-        // shuffle
         allTweets = allTweets.sort(() => Math.random() - 0.5)
-        
+        for (const tweetId in this.store) {
+            allTweets.push(this.store[tweetId])
+        }
+
         // create the index and store
         var store = {};
         var index = lunr(function(){

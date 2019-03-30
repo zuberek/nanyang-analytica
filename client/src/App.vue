@@ -1,7 +1,7 @@
 <template>
   <div id="app" :class="{ 'mobile': mobile }">
     <div id="top" class="top"></div>
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :fields="dynamicFields" :set="setSidebarOpen" :load="loadTwitts" :loadDynamic="loadDynamicData" :mobile="mobile"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadDynamicData" :set="setSidebarOpen" :load="loadTwitts" :mobile="mobile"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
@@ -47,9 +47,6 @@ export default {
         search: "",
         gender: "",
         age: [0, 100],
-      },
-      dynamicFields: {
-        dynamic: true,
       },
       pending: true,
       loadingText: 'Loading the data...',
@@ -117,7 +114,7 @@ export default {
       
     },
     loadTwitts() {
-      this.start();
+      this.cleanSeach();
       setTimeout(() => {
         var result = SearchEngine.search(this.searchQuery.search);
 
@@ -153,6 +150,7 @@ export default {
         extract(config).then(tweets => {
           this.loadingText = 'Indexing your tweets...';
           SearchEngine.load(tweets);
+          this.loadingText = 'Quering the store...';
           this.loadTwitts();
         })
       }, 10)
@@ -163,6 +161,11 @@ export default {
       var loadText = (text) ? text : 'We`re working on it...';
       this.loadingText = loadText;
     },
+    cleanSeach(){
+      this.search = "";
+      this.gender = "";
+      this.age = [0, 100];
+    }
   },
 }
 </script>
