@@ -26,6 +26,11 @@ Scraper.prototype.getTweets = function (tweets) {
 
     self.fetch(self.url)
       .then(function (request) {
+        if(!request.body) {
+          console.log('Failed a request! Url: ' + self.url);
+          resolve(tweets)
+          return
+        }
         var extracted = self.extractor.extract(request.body)
         if (extracted.length === 0) { resolve(tweets); return } // BREAK IF NO MORE TWEETS!!!
         tweets = tweets.concat(extracted)
@@ -34,6 +39,10 @@ Scraper.prototype.getTweets = function (tweets) {
         self.getTweets(tweets)
           .then(function (recursiveTweets) {
             resolve(recursiveTweets)
+          })
+          .catch(function (err){
+            console.log('Couldn\'t extract from: ' + self.url + '\n' + err);
+            resolve(tweets);
           })
       })
   })

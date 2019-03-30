@@ -22,7 +22,7 @@
                     <h5 class="text-uppercase">Search</h5>
                     <div 
                       class="form-group"
-                      v-tooltip.right="{ content: 'You can just type or specify the field like so - \'name:Kate\'. Fields: (name, body) | Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY', visible: !mobile }"
+                      v-tooltip.right="{ html: 'tooltipContent', visible: !mobile }"
                     >
                         <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
                     </div>

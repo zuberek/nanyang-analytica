@@ -7,7 +7,7 @@
         @submit.prevent="load"
         >
             <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load"
-            v-tooltip.focus.bottom.end="{ content: 'You can just type or specify the field like so - \'name:Kate\'. Fields: (name, body) | Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY', visible: !mobile }"
+            v-tooltip.focus.bottom.end="{ html: 'tooltipContent', visible: !mobile }"
                     >
 
         </form>
