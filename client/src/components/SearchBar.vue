@@ -6,10 +6,10 @@
         method="post"
         @submit.prevent="load"
         >
-            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load" @focus="show=true" @blur="show=false">
-            <small v-if="show" class="form-text text-muted my-0">
-                You can just type or specify the field like so - 'name:Kate'. Fields: (name, body) | Note: ONLY WHEN LOADED DYNAMICALLY
-            </small>
+            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load"
+            v-tooltip.focus.bottom.end="{ content: 'You can just type or specify the field like so - \'name:Kate\'. Fields: (name, body) | Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY', visible: !mobile }"
+                    >
+
         </form>
         <div v-if="Object.keys(filteredQuery).length > 0" class="mb-4">
             <span 

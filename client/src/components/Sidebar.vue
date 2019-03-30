@@ -20,26 +20,32 @@
         <div class="row px-4" v-if="isOpen">
             <div class="col-12">
                     <h5 class="text-uppercase">Search</h5>
-                    <div class="form-group ">
+                    <div 
+                      class="form-group"
+                      v-tooltip.right="{ content: 'You can just type or specify the field like so - \'name:Kate\'. Fields: (name, body) | Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY', visible: !mobile }"
+                    >
                         <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
                     </div>
-                    <div class="form-group">
-                        <label for="">Gender</label>
-                        <select class="form-control" v-model="query.gender">
-                            <option>Male</option>
-                            <option>Female</option>
-                        </select>
+                    <div v-tooltip.right="{ content: 'Those fields are based on our machine learning model\'s predictions, don\'t trust it too much', visible: !mobile }">
+                      <div class="form-group">
+                          <label for="">Gender</label>
+                          <select class="form-control" v-model="query.gender">
+                              <option>Male</option>
+                              <option>Female</option>
+                          </select>
+                      </div>
+                      <div class="form-group mb-4">
+                          <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
+                          <vue-slider 
+                              :marks="true"
+                              :data="data" 
+                              v-model="query.age" 
+                              :lazy="true"
+                              :enable-cross="false"
+                          />
+                      </div>
                     </div>
-                    <div class="form-group mb-4">
-                        <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
-                        <vue-slider 
-                            :marks="true"
-                            :data="data" 
-                            v-model="query.age" 
-                            :lazy="true"
-                            :enable-cross="false"
-                        />
-                    </div>
+                    
                     <button 
                       class="btn btn-warning my-2" 
                       @click="submit"
@@ -72,7 +78,7 @@
                                   type="text" 
                                   placeholder="Usernames" 
                                   v-model="currUserName"
-                                  v-tooltip.right="{ content: 'Type in an username and press space to add', visible: !mobile }"
+                                  v-tooltip.top="{ content: 'Type in an username and press space to add', visible: !mobile }"
                               >
                               <div class="input-group-append">
                                 <button 
