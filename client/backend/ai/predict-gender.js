@@ -6,9 +6,9 @@ import * as tf from '@tensorflow/tfjs'
 const NUMBER_OF_CHARS = 92;
 const TWEET_LENGTH = 60;
 
-async function preprocess(){
+function preprocess() {
     // group tweets by user
-    const dataset = require('../data/data.json').slice(0, 5000);
+    const dataset = require('../data/data.json').slice(0, 200);
 
     var userTweets = {};
     dataset.forEach(tweet => {
@@ -32,32 +32,49 @@ async function preprocess(){
         // chars = chars.pad(padding); // 
         // reshape
         // userTweets[user] = userTweets[user].reshape([1, TWEET_LENGTH, NUMBER_OF_CHARS]).print();
-
-
         userTweets[user] = tf.stack(userTweets[user])
     }
+    return userTweets;
+}
 
-    const model = await tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/ai/models/gender3/model.json")
-    console.log('loaded!'); 
-    var allPredictions = []   
-    for (const user in userTweets) {
-        console.log('predicting ' + user);
-        const prediction = model.predict(userTweets[user]);
-        // console.log(await prediction.array());
-    
-        const result = await prediction.array();
-        const predictions =  result.map(array => array[0]);
-        var sum = 0;
-        predictions.forEach(p => sum = sum+p);
-        allPredictions.push({
-            user,
-            average: sum/predictions.length,
-            gender: (sum/predictions.length<0.5) ? 'male' : 'female',
-            predictions
-        });
-    }
+function predictGender(data){
+    return new Promise(function (resolve, reject) {
+        tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/codes/models/gender3/model.json")
+            .then(model => {
+                console.log('loaded!'); 
+                var allPredictions = []   
+                for (const user in data) {
+                    console.log('predicting ' + user);
+                    const prediction = model.predict(data[user]);
+                    // console.log(await prediction.array());
+                
+                    prediction.array()
+                        .then(result => {
+                            const predictions =  result.map(array => array[0]);
+                            var sum = 0;
+                            predictions.forEach(p => sum = sum+p);
+                            allPredictions.push({
+                                user,
+                                average: sum/predictions.length,
+                                gender: (sum/predictions.length<0.5) ? 'male' : 'female',
+                                predictions
+                            });
+                            // console.log(allPredictions);
+                            resolve(allPredictions)
+                        })
+                        .catch(err => {
+                            console.log('Failed exporting the predictions to an array');
+                            reject(err);
+                        })
+                }
+                        })
+            .catch(err => {
+                console.log('Failed loading the model');
+                reject(err);
+            })
+    })
+}
 
-    console.log(allPredictions);
 
     // SUCCESSS
     // const model = await tf.loadLayersModel("https://storage.googleapis.com/tfjs-examples/mnist-acgan/dist/generator/model.json")
@@ -70,7 +87,7 @@ async function preprocess(){
     // const model = await tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/gh-pages/serve/gender_classification/model.json")
 
     // console.log(prediction);
-}
+
 
 function test() {
     var x = tf.tensor1d([1, 2, 3, 4]);
@@ -97,4 +114,4 @@ function tokenize(tweet) {
 
 
 
-export { preprocess, test };
+export { preprocess, predictGender, test };

@@ -7,7 +7,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts" />
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :runAI="runAI"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
@@ -31,6 +31,8 @@ import SearchEngine from '../backend/search/search-engine.js';
 import extract from "../backend/scrape/main";
 import { setTimeout } from 'timers';
 import returnMarked from "./utils/returnMarked.js";
+// import { preprocess, predictGender } from '../backend/ai/predict-gender.js'
+import engineAI from '../backend/ai/ai-engine.js';
 
 export default {
   name: 'app',
@@ -81,15 +83,15 @@ export default {
   mounted() {
     this.$nextTick(() => {
       setTimeout(() => {
-        SearchEngine.init();
-        this.pending = false;
+        SearchEngine.init()
+          .then(result => {
+            this.pending = result;
+          })
       }, 1);
       window.addEventListener('resize', () => {
         this.windowWidth = window.innerWidth;
       });
     });
-    
-
   },
   methods: {
     setSidebarOpen(bool) {
@@ -143,7 +145,6 @@ export default {
       
     },
     loadDynamicData(usernames){
-      
       this.start('Fetching from Twitter...');
       setTimeout(() => {
         var config = { profiles: usernames, showRetweets: false, showEmpty: false }
@@ -154,6 +155,20 @@ export default {
           this.loadTwitts();
         })
       }, 10)
+    },
+    runAI(){
+      engineAI.init();
+      // this.start('Preprocessing...');
+      // setTimeout(() => {
+      //   const data = preprocess();
+
+      //   this.loadingText = this.loadingText + ' ✔️\nPredicting gender...'
+      //   predictGender(data)
+      //     .then(predictions => {
+      //       this.loadingText = this.loadingText + ' ✔️\n'
+      //       console.log(predictions);
+      //     });
+      // }, 1000)
     },
     start(text){
       this.pending = true;

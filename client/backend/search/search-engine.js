@@ -6,11 +6,21 @@ export default class SearchEngine {
     static store;
 
     static init() {
-        console.log('loading indexing...');
-        this.idx = lunr.Index.load(require('./index.json'));
-        console.log('loading store...');
-        this.store = require('./store.json');
-        console.log('loaded!');
+        return new Promise((resolve)    => {
+            console.log('loading indexing...');
+            import('./index.json')
+                .then(index => {
+                    this.idx = lunr.Index.load(index);
+
+                    console.log('loading store...');
+                    import('./store.json')
+                        .then(store => {
+                            this.store = store;
+                        })
+                    console.log('loaded!');
+                    resolve();
+                })
+        })
     }
 
     static search(query) {

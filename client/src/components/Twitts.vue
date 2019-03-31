@@ -69,19 +69,13 @@
 </template>
 
 <script>
-import { preprocess, test } from '../../backend/ai/predict-gender.js'
 export default {
     name: 'twitts',
-    methods: {
-        runAI() {
-            // eslint-disable-next-line no-console
-            console.log('fucking');
-            preprocess();
-            // console.log('test');
-            // test();
-        }
-    },
     props: {
+        runAI: {
+            type: Function,
+            required: true,
+        },
         twitts: {
             type: Array,
             required: true,
