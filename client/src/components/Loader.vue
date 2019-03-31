@@ -2,8 +2,7 @@
     <div class="d-flex justify-content-center mx-auto" style="width:200px; margin-top:20vh;">
         <div>
             <pacman-loader  :loading="loading" :color="'#ffc107'" :size="'30px'" class="ml-3"/>
-            <p class="mt-2">
-            {{ text }}</p>
+            <p class="mt-2 text-center" v-html="text" />
         </div>
     </div>
 </template>

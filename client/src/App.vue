@@ -45,13 +45,13 @@ export default {
   data () {
     return {
       sidebarOpen: false,
-      searchQuery: {
+      searchQuery: {  
         search: "",
         gender: "",
         age: [0, 100],
       },
-      pending: true,
-      loadingText: 'Loading the data...',
+      pending: false,
+      loadingText: 'Waking up the <br> search engine...',
       page: 1,
       twitts: {},
       windowWidth: window.innerWidth,
@@ -81,17 +81,18 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      setTimeout(() => {
-        SearchEngine.init()
-          .then(result => {
-            this.pending = result;
-          })
-      }, 1);
-      window.addEventListener('resize', () => {
-        this.windowWidth = window.innerWidth;
-      });
-    });
+    // this.pending = true
+    // this.$nextTick(() => {
+    //   setTimeout(() => {
+    //     SearchEngine.init()
+    //       .then(result => {
+    //         this.pending = result;
+    //       })
+    //   }, 1);
+    //   window.addEventListener('resize', () => {
+    //     this.windowWidth = window.innerWidth;
+    //   });
+    // });
   },
   methods: {
     setSidebarOpen(bool) {
@@ -157,18 +158,20 @@ export default {
       }, 10)
     },
     runAI(){
-      engineAI.init();
-      // this.start('Preprocessing...');
-      // setTimeout(() => {
-      //   const data = preprocess();
-
-      //   this.loadingText = this.loadingText + ' ✔️\nPredicting gender...'
-      //   predictGender(data)
-      //     .then(predictions => {
-      //       this.loadingText = this.loadingText + ' ✔️\n'
-      //       console.log(predictions);
-      //     });
-      // }, 1000)
+      this.start('Waking up the AI...\n');
+      engineAI.init()
+        .then(() => {
+          this.loadingText = 'For more feedback open your console\nPreprocessing...';
+          setTimeout(() => {
+            const data = engineAI.preprocess();
+            this.loadingText = this.loadingText + ' ✔️\nPredicting gender...'
+            engineAI.predictGender(data)
+              .then(predictions => {
+                this.loadingText = this.loadingText + ' ✔️\nSuccess'
+                console.log(predictions);
+              });
+          }, 1000)
+        })
     },
     start(text){
       this.pending = true;

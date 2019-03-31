@@ -1,37 +1,50 @@
 /* eslint-disable no-console */
 import mapping from './char_mapping'
+import { predictGender } from "./predict-gender";
+import * as tf from '@tensorflow/tfjs';
+
+const DATA_LIMIT = 1000;
 
 const NUMBER_OF_CHARS = 92;
 const TWEET_LENGTH = 60;
 
 export default class engineAI {
-    static tf;
     static data;
+    // static tf;
 
     static init() {
-        import('@tensorflow/tfjs')
-            .then(tf => {
-               this.tf = tf;
-
-               import('../data/data.json')
+        return new Promise((resolve) => {
+            import('../data/data.json')
                 .then(data => {
-                    this.data = data;
+                    var min = [];
+                    for (const key in data) {
+                        min.push(data[key])
+                        if(min.length > DATA_LIMIT-1) break
+                    }
+                    this.data = min;
+                    resolve(true);
+
+                    // import('@tensorflow/tfjs')
+                    //     .then(tf => {
+                    //         this.tf = tf;
+                    //         resolve(true);
+                    //     })
                 })
-            })
+        })
     }
 
     static preprocess(){
-        // group tweets by user
-        const dataset = this.data;
-    
+
+        // group tweets by user    
         var userTweets = {};
-        dataset.forEach(tweet => {
+        this.data.forEach(tweet => {
             const user = tweet.author;
+            if(!user) console.log(tweet);
             if(!userTweets[user.username]) userTweets[user.username] = [];
             userTweets[user.username].push(tweet.body);
         });
     
-        console.log(userTweets);
+        console.log(Object.keys(userTweets).length + ' users');
     
         for (const user in userTweets) {
             var tweets = userTweets[user];
@@ -46,9 +59,18 @@ export default class engineAI {
             // chars = chars.pad(padding); // 
             // reshape
             // userTweets[user] = userTweets[user].reshape([1, TWEET_LENGTH, NUMBER_OF_CHARS]).print();
-            userTweets[user] = this.tf.stack(userTweets[user])
+            userTweets[user] = tf.stack(userTweets[user])
         }
         return userTweets;
+    }
+
+    static predictGender(data){
+        return new Promise((resolve, reject) => {
+            predictGender(data, tf)
+                .then(predictions => resolve(predictions))
+                .catch(err => reject(err))
+        })
+        
     }
 }
 
@@ -59,7 +81,7 @@ function tokenize(tweet) {
     // console.log(chars);
     // chars = chars.map(char => char.padEnd(TWEET_LENGTH, '0'))
     // console.log(chars);
-    chars = this.tf.oneHot(chars, NUMBER_OF_CHARS); // vectorize
+    chars = tf.oneHot(chars, NUMBER_OF_CHARS); // vectorize
     var padding = [[0, Math.abs(60 - chars.shape[0])] , [0,0]] // [[firstD] , [secondD]]
     chars = chars.pad(padding); // 
     // console.log(chars.shape);   

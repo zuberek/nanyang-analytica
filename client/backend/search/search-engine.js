@@ -51,9 +51,9 @@ export default class SearchEngine {
             allTweets = allTweets.concat(data[user]);
         }
         allTweets = allTweets.sort(() => Math.random() - 0.5)
-        for (const tweetId in this.store) {
-            allTweets.push(this.store[tweetId])
-        }
+        // for (const tweetId in this.store) {
+        //     allTweets.push(this.store[tweetId])
+        // }
 
         // create the index and store
         var store = {};
