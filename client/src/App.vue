@@ -7,7 +7,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts" />
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :runAI="runAI"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :runAI="runAI" :text="pageText"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
@@ -34,6 +34,7 @@ import { setTimeout } from 'timers';
 import returnMarked from "./utils/returnMarked.js";
 // import { preprocess, predictGender } from '../backend/ai/predict-gender.js'
 import engineAI from '../backend/ai/ai-engine.js';
+import msg from "./messages.js";
 
 export default {
   name: 'app',
@@ -45,6 +46,7 @@ export default {
   },
   data () {
     return {
+      msg,
       sidebarOpen: false,
       searchQuery: {  
         search: "",
@@ -52,7 +54,8 @@ export default {
         age: [0, 100],
       },
       pending: false,
-      loadingText: 'Waking up the <br> search engine...',
+      loadingText: "We're working on it...",
+      pageText: msg.hello,
       page: 1,
       twitts: {},
       windowWidth: window.innerWidth,
@@ -82,12 +85,12 @@ export default {
     }
   },
   mounted() {
-    this.pending = true
+    this.start('Waking up the <br> search engine')
     this.$nextTick(() => {
       setTimeout(() => {
         SearchEngine.init()
-          .then(result => {
-            this.pending = result;
+          .then(() => {
+            this.pending = false;
           })
       }, 1);
       window.addEventListener('resize', () => {
@@ -119,7 +122,16 @@ export default {
     },
     loadTwitts() {
       this.cleanSeach();
+      this.start("We're working on it...")
       setTimeout(() => {
+        
+        if(!this.searchQuery.search) {
+          this.pageText = msg.search;
+          this.twitts = [];
+          this.pending = false;
+          return;
+        }
+
         var result = SearchEngine.search(this.searchQuery.search);
 
         var { age, gender } = this.searchQuery;
@@ -131,7 +143,9 @@ export default {
           result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
 
         this.twitts = result;
-        this.page = 1,
+        // console.log(result);
+        this.page = 1;
+        if(result.twitts.length === 0) this.pageText = msg.error;
 
         // cool off
         setTimeout(() => {
@@ -159,19 +173,19 @@ export default {
       }, 10)
     },
     runAI(){
-      this.start('Waking up the AI...\n');
+      this.start('Waking up the AI 🤖...<br>Feedback in console');
       engineAI.init()
         .then(() => {
-          this.loadingText = 'For more feedback open your console\nPreprocessing...';
+          this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
+
           setTimeout(() => {
-            const data = engineAI.preprocess();
-            this.loadingText = this.loadingText + ' ✔️\nPredicting gender...'
-            engineAI.predictGender(data)
+            engineAI.predictGender()
               .then(predictions => {
-                this.loadingText = this.loadingText + ' ✔️\nSuccess'
+                this.loadingText = this.loadingText + ' ✔️<br>Success'
                 console.log(predictions);
               });
-          }, 1000)
+          }, 10)
+
         })
     },
     start(text){

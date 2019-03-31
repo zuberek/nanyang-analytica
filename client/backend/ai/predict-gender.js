@@ -3,7 +3,6 @@ function predictGender(data, tf){
     return new Promise(function (resolve, reject) {
         tf.loadLayersModel("https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/codes/models/gender3/model.json")
             .then(model => {
-                console.log('loaded!'); 
                 var allPredictions = []   
                 for (const user in data) {
                     console.log('predicting ' + user);
@@ -17,8 +16,8 @@ function predictGender(data, tf){
                             predictions.forEach(p => sum = sum+p);
                             allPredictions.push({
                                 user,
-                                average: sum/predictions.length,
                                 gender: (sum/predictions.length<0.5) ? 'male' : 'female',
+                                average: sum/predictions.length,
                                 predictions
                             });
                             // console.log(allPredictions);

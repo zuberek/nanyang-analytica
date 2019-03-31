@@ -1,25 +1,40 @@
 /* eslint-disable no-console */
 import lunr from "lunr";
 
+var bool = true;
+// bool = false
+const SEARCH_ENGINE_ACTIVE = bool
+
+
 export default class SearchEngine {
     static idx;
     static store;
 
     static init() {
-        return new Promise((resolve)    => {
-            console.log('loading indexing...');
-            import('./index.json')
-                .then(index => {
-                    this.idx = lunr.Index.load(index);
+        var text = (SEARCH_ENGINE_ACTIVE) ? 'search engine init' : 'search engine not active'
+        console.log(text);
 
-                    console.log('loading store...');
-                    import('./store.json')
-                        .then(store => {
-                            this.store = store;
-                        })
-                    console.log('loaded!');
-                    resolve();
+        return new Promise((resolve)    => {
+            if(!SEARCH_ENGINE_ACTIVE) return resolve();
+            console.log('loading indexing...');
+            fetch('https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/search/index.json')
+            .then(response => {
+                return response.json()
+            })
+            .then(indexing => {
+                this.idx = lunr.Index.load(indexing);
+                console.log('loading store...');
+
+                fetch('https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/search/store.json')
+                .then(response => {
+                    return response.json()
                 })
+                .then(store => {
+                    this.store = store;
+                    console.log('search engine loaded');
+                    resolve()
+                })
+            })
         })
     }
 

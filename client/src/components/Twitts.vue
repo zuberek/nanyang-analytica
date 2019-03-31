@@ -3,9 +3,7 @@
         <div style="width:250px; margin-top:20vh;" class="mx-auto text-center">
 
             <span>
-                Hello! 🤗 <br>
-                To search Twitter type in a keyword <br>
-                or go to options
+                {{ text }}
             </span>
             <br><br>
             <button class="btn btn-warning" @click="runAI">FUCK THE AI!</button>
@@ -74,6 +72,10 @@ export default {
     props: {
         runAI: {
             type: Function,
+            required: true,
+        },
+        text: {
+            type: String,
             required: true,
         },
         twitts: {

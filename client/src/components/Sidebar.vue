@@ -20,6 +20,11 @@
         <div class="row px-4" v-if="isOpen">
             <div class="col-12">
                     <h5 class="text-uppercase">Search</h5>
+                    <form
+                      action="#"
+                      method="post"
+                      @submit.prevent="submit"
+                    >
                     <div 
                       class="form-group"
                       v-tooltip.right="{ html: 'tooltipContent', visible: !mobile }"
@@ -51,6 +56,7 @@
                       @click="submit"
                       v-scroll-to="'.top'"
                     >Search</button>
+                    </form>
 
                     <h5 class="text-uppercase mt-4">data</h5>
                     <!-- <div 
@@ -69,6 +75,11 @@
                         <label class="form-check-label" for="exampleCheck1">Dynamically load Twitter data</label>
                     </div> -->
                     <div>
+                        <form
+                        action="#"
+                        method="post"
+                        @submit.prevent="split"
+                        >
                         <div class="form-group mt-2">
                             <label for="">User Names</label>
                             <div class="input-group">
@@ -80,13 +91,18 @@
                                   v-tooltip.top="{ content: 'Type in an username and press space to add', visible: !mobile }"
                               >
                               <div class="input-group-append">
-                                <button 
-                                class="btn btn-outline-warning" 
-                                @click="preload">
-                                Random</button>
+                                <button  
+                                  class="d-none" 
+                                  type="submit" />
+                                <button  
+                                  class="btn btn-outline-warning" 
+                                  @click="preload">
+                                  Random
+                                </button >
                               </div>
                             </div>
                         </div>
+                        </form>
                         <div 
                             v-if="splittedNames.length > 0" 
                             class="row mb-4"
@@ -156,6 +172,10 @@ export default {
         },
         close(){
           this.set(false);
+        },
+        split(){
+          this.splittedNames.push(this.currUserName);
+          this.currUserName = '';
         }
     },
     watch: {
