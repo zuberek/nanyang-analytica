@@ -13,10 +13,11 @@
         </div>
       </div>
       <div id="tooltipContent">
-        <p>You can just type or specify the field - name:Kate <br> 
+        <p>
+          <!-- You can just type or specify the field - name:Kate <br>  -->
           Avaiable fields are: name, body <br> 
-          Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY <br>
-          For more options go to <a rel="noopener noreferrer" target="_blank" href="https://lunrjs.com/guides/searching.html#wildcards"> <strong>Lunr</strong> </a> </p>
+          <!-- Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY <br> -->
+          For tips on use go to <a rel="noopener noreferrer" target="_blank" href="https://lunrjs.com/guides/searching.html#wildcards"> <strong>Lunr</strong> </a> </p>
       </div>
     </main>
   </div>
@@ -81,18 +82,18 @@ export default {
     }
   },
   mounted() {
-    // this.pending = true
-    // this.$nextTick(() => {
-    //   setTimeout(() => {
-    //     SearchEngine.init()
-    //       .then(result => {
-    //         this.pending = result;
-    //       })
-    //   }, 1);
-    //   window.addEventListener('resize', () => {
-    //     this.windowWidth = window.innerWidth;
-    //   });
-    // });
+    this.pending = true
+    this.$nextTick(() => {
+      setTimeout(() => {
+        SearchEngine.init()
+          .then(result => {
+            this.pending = result;
+          })
+      }, 1);
+      window.addEventListener('resize', () => {
+        this.windowWidth = window.innerWidth;
+      });
+    });
   },
   methods: {
     setSidebarOpen(bool) {

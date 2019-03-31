@@ -6,10 +6,9 @@
         method="post"
         @submit.prevent="load"
         >
-            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load"
-            v-tooltip.focus.bottom.end="{ html: 'tooltipContent', visible: !mobile }"
-                    >
-
+            <input class="form-control" type="text" v-model="query.search" placeholder="Keyword" @input="load" @focus="show=true" @blur="show=false">
+            <small v-if="show" class="form-text text-muted mt-0 mb-1">Avaiable fields are: name, body.
+          For tips on use go to <a rel="noopener noreferrer" target="_blank" href="https://lunrjs.com/guides/searching.html#wildcards"> <strong>Lunr</strong> </a></small>
         </form>
         <div v-if="Object.keys(filteredQuery).length > 0" class="mb-4">
             <span 

@@ -26,7 +26,7 @@
                     >
                         <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
                     </div>
-                    <div v-tooltip.right="{ content: 'Those fields are based on our machine learning model\'s predictions, don\'t trust it too much', visible: !mobile }">
+                    <div v-tooltip.right="{ content: 'Not working yet', visible: !mobile }">
                       <div class="form-group">
                           <label for="">Gender</label>
                           <select class="form-control" v-model="query.gender">
@@ -82,7 +82,6 @@
                               <div class="input-group-append">
                                 <button 
                                 class="btn btn-outline-warning" 
-                                v-tooltip.right="{ content: 'Get some random usernames', visible: !mobile }"
                                 @click="preload">
                                 Random</button>
                               </div>

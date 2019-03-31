@@ -39,7 +39,7 @@
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
                             <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
                             <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
-                            <small class="text-muted mt-0 mb-1">{{twitt.username}}, {{twitt.time}}</small>
+                            <small class="text-muted mt-0 mb-1">{{twitt.username}} {{twitt.time}}</small>
                              
                         </div>
                         <div class="col-sm-8 col-12" v-if="!open">
