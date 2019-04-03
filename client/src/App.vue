@@ -16,13 +16,11 @@
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
       </div>
-      <div id="tooltipContent">
+      <!-- <div id="tooltipContent">
         <p>
-          <!-- You can just type or specify the field - name:Kate <br>  -->
           Avaiable fields are: name, body <br> 
-          <!-- Note: FOR NOW ONLY WHEN LOADED DYNAMICALLY <br> -->
           For tips on use go to <a rel="noopener noreferrer" target="_blank" href="https://lunrjs.com/guides/searching.html#wildcards"> <strong>Lunr</strong> </a> </p>
-      </div>
+      </div> -->
     </main>
   </div>
 </template>
