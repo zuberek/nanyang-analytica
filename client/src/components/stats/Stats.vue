@@ -1,5 +1,6 @@
 <template>
   <div class="card hoverable p-2">
+      <h5>Search Statistics</h5>
       <div class="row">
           <div class="col-6">
                 <pie-chart :data="genderData" :options="smallOptions" :styles="smallStyle"></pie-chart>
@@ -14,11 +15,11 @@
           </div>
           <div class="col-lg-4 mt-4" style="font-size:">
               <div class="row justify-content-center">
-                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Openness<br></small></div>
-                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Conscientiousness<br></small></div>
-                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> -5% Extraversion<br></small></div>
-                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Agreeableness<br></small></div>
-                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> -5% Neuroticism<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #28a745;"></i> +5% Openness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #28a745;"></i> +5% Conscientiousness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #DD1B16;"></i> -5% Extraversion<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #28a745;"></i> +5% Agreeableness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #DD1B16;"></i> -5% Neuroticism<br></small></div>
               </div>
           </div>
       </div>
@@ -41,21 +42,21 @@
             datasets: [
                 {
                     backgroundColor: [
-                        '#41B883',
-                        '#E46651',
+                        '#DD1B16',
+                        '#28a745',
                     ],
                     data: [160, 90]
                 }
             ]
         },
         ageData: {
-            labels: ['Young', 'Middle', 'Senior'],
+            labels: ['Young', 'Middle Aged', 'Senior'],
             datasets: [
                 {
                     backgroundColor: [
-                        '#41B883',
+                        '#007bff',
                         '#DD1B16',
-                        '#E46651',
+                        '#ffc107',
                     ],
                     data: [70, 90, 90]
                 }
@@ -64,26 +65,26 @@
         personalityData: {
             labels: ['Conscientiousness','Neuroticism', 'Extraversion', 'Agreeableness', 'Openess'],
             datasets: [
-                {
-                    label: 'Average',
-                    backgroundColor: 'rgba(179,181,198,0.2)',
-                    borderColor: 'rgba(179,181,198,1)',
-                    pointBackgroundColor: 'rgba(179,181,198,1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(179,181,198,1)',
-                    data: [65, 59, 90, 81, 56]
-                },
-                {
-                    label: 'Search',
-                    backgroundColor: 'rgba(255,99,132,0.2)',
-                    borderColor: 'rgba(255,99,132,1)',
-                    pointBackgroundColor: 'rgba(255,99,132,1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(255,99,132,1)',
-                    data: [28, 48, 40, 19, 96]
-                }
+              {
+                  label: 'Search',
+                  backgroundColor: 'rgba(255,99,132,0.2)',
+                  borderColor: 'rgb(255, 10, 122)',
+                  pointBackgroundColor: 'rgba(255,99,132,1)',
+                  pointBorderColor: '#fff',
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: 'rgba(255,99,132,1)',
+                  data: [28, 48, 40, 19, 96]
+              },
+              {
+                  label: 'Average',
+                  backgroundColor: 'rgba(179,181,198,0.2)',
+                  borderColor: 'rgb(23, 162, 184)',
+                  pointBackgroundColor: 'rgba(179,181,198,1)',
+                  pointBorderColor: '#fff',
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: 'rgba(179,181,198,1)',
+                  data: [65, 59, 90, 81, 56]
+              },
             ]
         },
         smallOptions: {

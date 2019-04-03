@@ -176,6 +176,8 @@ export default {
 
       var data = await SearchEngine.load(this.dataConfig);
       if(typeof data != "undefined" && data) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        console.log('should change');
         this.loadingText = 'Indexing your tweets...';
         SearchEngine.index(data, true);
       }
