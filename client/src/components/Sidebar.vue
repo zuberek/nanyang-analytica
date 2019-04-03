@@ -51,14 +51,16 @@
                       </div>
                     </div>
                     
+                    <div class="row justify-content-around">
                     <button 
                       class="btn btn-warning my-2" 
                       @click="submit"
                       v-scroll-to="'.top'"
                     >Search</button>
+                    </div>
                     </form>
 
-                    <h5 class="text-uppercase mt-4">data</h5>
+                    <h5 class="text-uppercase mt-4" >data</h5>
                     <!-- <div 
                       class="form-check mb-2"
                       v-tooltip.right="{ content: 'Use our preprepared data of random Twitter users.', visible: !mobile }"
@@ -88,7 +90,7 @@
                                   type="text" 
                                   placeholder="Usernames" 
                                   v-model="currUserName"
-                                  v-tooltip.top="{ content: 'Type in an username and press space to add', visible: !mobile }"
+                                  v-tooltip.top="{ content: 'Type in any username to load', visible: !mobile }"
                               >
                               <div class="input-group-append">
                                 <button  
@@ -104,31 +106,50 @@
                         </div>
                         </form>
                         <div 
-                            v-if="splittedNames.length > 0" 
-                            class="row mb-4"
+                          class="form-group mb-4"
+                          v-tooltip.right="{ content: 'Load our preprocessed, static data', visible: !mobile }"
+                        >
+                          <label for="customRange1">Load: {{asdf}}k</label>
+                          <vue-slider 
+                              :marks="marks"
+                              v-model="asdf" 
+                              :lazy="true"
+                              :included="true"
+                          />
+                        </div>
+                        <div 
+                            v-if="dataFields.dynamic.length > 0" 
+                            class="row mb-2"
                             style="max-width:300px;">
-                            <div v-for="(name) in splittedNames" :key="name" class="badge badge-warning m-1 badge-name">
+                            <div v-for="(name) in dataFields.dynamic" :key="name" class="badge badge-warning m-1 badge-name">
                                 <span>
                                     {{ name }} </span>
                                 | <span @click="remove(name)" style="cursor: pointer;"> X </span>
                             </div>
                         </div>
                         <div class="row justify-content-around">
+                            
+                            <small 
+                              v-if="dataFields.dynamic.length>0 && asdf" 
+                              class="form-text text-muted mt-0 mb-1"> 
+                              {{ msg.side.load }}
+                            </small>
+
                             <button 
-                            class="btn btn-warning mb-2" 
-                            @click="loadDynamic(splittedNames);loadText = 'Reload';"
+                            class="btn btn-warning my-2" 
+                            @click="loadDataMethod"
                             v-scroll-to="'.top'"
                             >
                               {{loadText}}
                             </button>
 
                             <button
-                                v-if="splittedNames.length>0"
+                                v-if="dataFields.dynamic.length>0"
                                 class="btn btn-warning mb-2" 
-                                @click="splittedNames=[]">
+                                @click="dataFields.dynamic=[]">
                             Clear</button>
-                        </div>
-                        
+
+                        </div>               
                     </div>               
             </div>
         </div>
@@ -141,6 +162,7 @@
 import { ScaleRotate } from 'vue-burger-menu';
 import VueSlider from 'vue-slider-component';
 import randomUsers from "../utils/randomUsers.js";
+import msg from '../messages.js';
 
 export default {
     components: {
@@ -149,32 +171,40 @@ export default {
     },
     data () {
         return {
+            msg,
+            asdf: 10,
             currUserName: '',
-            splittedNames: [],
+            marks: [0, 10, 50, 100],
             data: [0, 18, 23, 42, 100],
             loadText: 'Load',
         }
     },
     methods: {
+        loadDataMethod(){
+          this.update(this.asdf);
+          this.dataFields.static = this.asdf;
+          this.loadText = 'Reload';
+          this.loadDynamic();
+        },
         submit() {
             this.set(false);
             this.load();
         },
         preload() {
-          this.splittedNames = this.splittedNames.concat(
-            randomUsers
-              .filter(u => !this.splittedNames.includes(u))
+          var random = randomUsers
+              .filter(u => !this.dataFields.dynamic.includes(u) && u.length>0)
               .sort(() => Math.random() - 0.5)
-              .slice(0,10));
+              .slice(0,10);
+          this.dataFields.dynamic = this.dataFields.dynamic.concat(random)
         },
         remove(name){
-            this.splittedNames = this.splittedNames.filter(n => n != name);
+            this.dataFields.dynamic = this.dataFields.dynamic.filter(n => n != name);
         },
         close(){
           this.set(false);
         },
         split(){
-          this.splittedNames.push(this.currUserName);
+          if(this.currUserName) this.dataFields.dynamic.push(this.currUserName);
           this.currUserName = '';
         }
     },
@@ -182,7 +212,7 @@ export default {
         currUserName: function (val) {
             var elems = val.split(' ');
             if(elems.length > 1){
-                this.splittedNames = this.splittedNames.concat(elems.filter(e => e.length > 0));
+                this.dataFields.dynamic = this.dataFields.dynamic.concat(elems.filter(e => e.length > 0));
                 this.currUserName = '';
             }
         },
@@ -204,6 +234,10 @@ export default {
             type: Function,
             required: true,
         },
+        dataFields: {
+          type: Object,
+          required: true,
+        },
         loadDynamic: {
             type: Function,
             required: true,
@@ -211,18 +245,12 @@ export default {
         mobile: {
             type: Boolean,
             required: true,
+        },
+        update: {
+            type: Function,
+            required: true,
         }
     },
-    computed: {
-      useStatic: {
-        get: function () {
-          return !this.fields.dynamic
-        },
-        set: function (newValue) {
-          this.fields.dynamic = !newValue
-        }
-      }
-    }
 }
 </script>
 

@@ -8,6 +8,10 @@ const msg = {
         search: "Warming up the search engine...",
         ai: "Waking up the AI 🤖...",
         scrape: ""
+    },
+
+    side: {
+        load: "Loading both static and dynamic fields will take a while as we need to reindex it after"
     }
     
 }

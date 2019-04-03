@@ -1,7 +1,7 @@
 <template>
   <div id="app" :class="{ 'mobile': mobile }">
     <div id="top" class="top"></div>
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadData" :set="setSidebarOpen" :load="searchForTweets" :mobile="mobile"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadData" :dataFields="dataConfig" :set="setSidebarOpen" :load="searchForTweets" :mobile="mobile" :update="updatePreloaded"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
@@ -53,8 +53,8 @@ export default {
         age: [0, 100],
       },
       dataConfig: {
-        static: '',
-        dynamic: []
+        preloaded: "asdfasdfasdfafds",
+        dynamic: [],
       },
       pending: false,
       loadingText: msg.load.work,
@@ -102,6 +102,9 @@ export default {
     });
   },
   methods: {
+    updatePreloaded(value) {
+      this.dataConfig.preloaded = value;
+    },
     setSidebarOpen(bool) {
       this.sidebarOpen = bool;
       
@@ -168,15 +171,17 @@ export default {
       await new Promise(resolve => setTimeout(resolve, 10))
 
       var data = await SearchEngine.load(this.dataConfig);
-
-      if(data) {
+      if(typeof data != "undefined" && data) {
         this.loadingText = 'Indexing your tweets...';
-        SearchEngine.index(data);
+        SearchEngine.index(data, true);
       }
 
       this.loadingText = 'Quering the store...';
       this.cleanSeach();
-      this.searchForTweets();
+      var result = SearchEngine.search(this.searchQuery.search);
+      this.twitts = result;
+      this.page = 1;
+      this.pending = false;
     },
     runAI(){
       this.start(msg.load.ai + '<br>Feedback in console');

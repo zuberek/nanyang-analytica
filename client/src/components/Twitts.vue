@@ -6,7 +6,7 @@
                 {{ text }}
             </span>
             <br><br>
-            <button class="btn btn-warning" @click="runAI">FUCK THE AI!</button>
+            <button class="btn btn-warning" @click="runAI">WAKE UP THE AI!</button>
             
         </div>
     </div>
