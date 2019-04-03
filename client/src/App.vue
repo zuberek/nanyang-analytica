@@ -1,5 +1,9 @@
 <template>
   <div id="app" :class="{ 'mobile': mobile }">
+    <link rel="stylesheet" 
+        href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" 
+        integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" 
+        crossorigin="anonymous">
     <div id="top" class="top"></div>
     <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadData" :dataFields="dataConfig" :set="setSidebarOpen" :load="searchForTweets" :mobile="mobile" :update="updatePreloaded"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
@@ -7,7 +11,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="searchForTweets" />
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :runAI="runAI" :text="pageText"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :page="page" :text="pageText" :mobile="mobile"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>

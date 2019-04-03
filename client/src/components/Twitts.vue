@@ -6,7 +6,7 @@
                 {{ text }}
             </span>
             <br><br>
-            <button class="btn btn-warning" @click="runAI">WAKE UP THE AI!</button>
+            <!-- <button class="btn btn-warning" @click="runAI">WAKE UP THE AI!</button> -->
             
         </div>
     </div>
@@ -29,18 +29,47 @@
             </div>
         </div>
         
-        <div v-if="info.count>0"  class="text-center row">
-            <div v-for="(twitt, index) in twitts" :key="index" class="col-lg-6 mb-2" v-bind:class="{ 'col-6': open }" >
+        <!-- <div v-if="info.count>0"  class="text-center row"> -->
+        <div  class="text-center row">
+            <div class="row" v-if="page===1">
+                <div class="col-6" v-if="!mobile">
+                    <div class="row">
+                        <div v-for="(twitt, index) in firstTwo" :key="index" class="col-12 mb-2" style="padding-left:30px">
+                            <div class="card hoverable" >
+                                <div class="row m-4">
+                                    <div class="col-lg-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
+                                        <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
+                                        <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
+                                        <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
+                                        <small class="text-muted mt-0 mb-1">{{twitt.username}} {{twitt.time}}</small>
+                                        
+                                    </div>
+                                    <div class="col-lg-8 col-12" v-if="!open">
+                                        <div class="card-body">
+                                            <p class="card-text" v-html="twitt.body"/>
+                                            <a :href="twitt.link" rel="noopener noreferrer" target="_blank" class="btn btn-warning">Go to tweet</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 mb-2" style="padding-right:30px; padding-left:30px;">
+                    <Stats />
+                </div>
+            </div>
+            <div v-for="(twitt, index) in slicedTweets" :key="index" class="col-lg-6 mb-2" v-bind:class="{ 'col-6': open }" >
                 <div class="card hoverable">
                     <div class="row m-4">
-                        <div class="col-sm-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
+                        <div class="col-sm-4" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <img class="card-img-top" :src="twitt.photo" style="width:100px;height:100px;border-radius: 50%;" alt="Card image cap">
                             <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
                             <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
                             <small class="text-muted mt-0 mb-1">{{twitt.username}} {{twitt.time}}</small>
                              
                         </div>
-                        <div class="col-sm-8 col-12" v-if="!open">
+                        <div class="col-sm-8" v-if="!open">
                             <div class="card-body">
                                 <p class="card-text" v-html="twitt.body"/>
                                 <a :href="twitt.link" rel="noopener noreferrer" target="_blank" class="btn btn-warning">Go to tweet</a>
@@ -67,15 +96,19 @@
 </template>
 
 <script>
+import Stats from './stats/Stats.vue'
 export default {
     name: 'twitts',
+    components: {
+        Stats
+    },
     props: {
-        runAI: {
-            type: Function,
-            required: true,
-        },
         text: {
             type: String,
+            required: true,
+        },
+        page: {
+            type: Number,
             required: true,
         },
         twitts: {
@@ -98,6 +131,10 @@ export default {
             type: Boolean,
             required: true,
         },
+        mobile: {
+            type: Boolean,
+            required: true,
+        },
     },
     computed: {
         noOfPages () {
@@ -106,6 +143,13 @@ export default {
             if(num > 10) num = 10;
             return num;
         },
+        firstTwo(){
+            return this.twitts.slice(0,2);
+        },
+        slicedTweets() {
+            if(this.page === 1 && !this.mobile) return this.twitts.slice(2,8);
+            else return this.twitts;
+        }
     },
 }
 </script>

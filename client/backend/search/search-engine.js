@@ -15,7 +15,7 @@ const OPTIONS = {
 
 
 var bool = true;
-bool = false
+// bool = false
 const SEARCH_ENGINE_ACTIVE = bool
 
 
