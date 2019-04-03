@@ -3,8 +3,8 @@ const data = require('../../data/data.json')
 const fs =  require("fs")
 
 var dataset = []
-// dataset = data.slice(0,50000);
 dataset = data.sort(() => Math.random() - 0.5);
+dataset = dataset.slice(0,10000);
 
 // create the index and store
 var store = {} 

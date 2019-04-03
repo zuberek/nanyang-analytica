@@ -1,5 +1,17 @@
 /* eslint-disable no-console */
 import lunr from "lunr";
+import extract from "../scrape/main";
+
+const BASE_URL = 'https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/server/'
+const INDEX = 'search/index'
+const STORE = 'search/store'
+
+const OPTIONS = {
+    small: '_small.json',
+    medium: '_medium.json',
+    large: '_large.json'
+}
+
 
 var bool = true;
 // bool = false
@@ -17,24 +29,24 @@ export default class SearchEngine {
         return new Promise((resolve)    => {
             if(!SEARCH_ENGINE_ACTIVE) return resolve();
             console.log('loading indexing...');
-            fetch('https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/search/index.json')
-            .then(response => {
-                return response.json()
-            })
-            .then(indexing => {
-                this.idx = lunr.Index.load(indexing);
-                console.log('loading store...');
-
-                fetch('https://raw.githubusercontent.com/zuberek/nanyang-analytica/master/client/backend/search/store.json')
+            fetch(BASE_URL + INDEX + OPTIONS.small)
                 .then(response => {
                     return response.json()
                 })
-                .then(store => {
-                    this.store = store;
-                    console.log('search engine loaded');
-                    resolve()
+                .then(indexing => {
+                    this.idx = lunr.Index.load(indexing);
+                    console.log('loading store...');
+
+                    fetch(BASE_URL + STORE + OPTIONS.small)
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(store => {
+                        this.store = store;
+                        console.log('search engine loaded');
+                        resolve()
+                    })
                 })
-            })
         })
     }
 
@@ -60,17 +72,35 @@ export default class SearchEngine {
         return results;
     }
 
-    static load(data) {
+    static async load(config) {
+        if(config.static){
+            var store = (await fetch(BASE_URL + STORE + OPTIONS[config.static])).json()
+
+            if(config.dynamic){
+                var extractConfig = {
+                    profiles: config.dynamic, 
+                    showRetweets: false, 
+                    showEmpty: false 
+                  }
+                var extraTweets = await extract(extractConfig)
+
+                // join them together, shuffle and return
+            } else {
+                var index = (await fetch(BASE_URL + INDEX + OPTIONS[config.static])).json()
+                this.idx = index;
+                this.store = store;
+                return false;
+            }
+        }
+    }
+
+    static async index(data) {
         var allTweets = [];
+        
         for (const user in data) {
             allTweets = allTweets.concat(data[user]);
         }
-        allTweets = allTweets.sort(() => Math.random() - 0.5)
-        // for (const tweetId in this.store) {
-        //     allTweets.push(this.store[tweetId])
-        // }
 
-        // create the index and store
         var store = {};
         var index = lunr(function(){
             this.ref('id');
@@ -95,8 +125,6 @@ export default class SearchEngine {
                 }
             }, this);
         });
-
-        this.idx = index;
-        this.store = store;
+        return {store, index}
     }
 }

@@ -1,11 +1,11 @@
 <template>
   <div id="app" :class="{ 'mobile': mobile }">
     <div id="top" class="top"></div>
-    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadDynamicData" :set="setSidebarOpen" :load="loadTwitts" :mobile="mobile"/>
+    <sidebar :isOpen="sidebarOpen" :query="searchQuery" :loadDynamic="loadData" :set="setSidebarOpen" :load="searchForTweets" :mobile="mobile"/>
     <img class="logo-lion" src="./assets/logo-black.png" alt="">
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
-        <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="loadTwitts" />
+        <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="searchForTweets" />
         
         <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :runAI="runAI" :text="pageText"/>
         <div v-else>
@@ -29,7 +29,6 @@ import Twitts from './components/Twitts.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
-import extract from "../backend/scrape/main";
 import { setTimeout } from 'timers';
 import returnMarked from "./utils/returnMarked.js";
 // import { preprocess, predictGender } from '../backend/ai/predict-gender.js'
@@ -53,8 +52,12 @@ export default {
         gender: "",
         age: [0, 100],
       },
+      dataConfig: {
+        static: '',
+        dynamic: []
+      },
       pending: false,
-      loadingText: "We're working on it...",
+      loadingText: msg.load.work,
       pageText: msg.hello,
       page: 1,
       twitts: {},
@@ -85,7 +88,7 @@ export default {
     }
   },
   mounted() {
-    this.start('Waking up the <br> search engine')
+    this.start(msg.load.search)
     this.$nextTick(() => {
       setTimeout(() => {
         SearchEngine.init()
@@ -120,9 +123,9 @@ export default {
       }
       
     },
-    loadTwitts() {
-      this.cleanSeach();
-      this.start("We're working on it...")
+    searchForTweets() {
+      // this.cleanSeach();
+      this.start()
       setTimeout(() => {
         
         if(!this.searchQuery.search) {
@@ -160,20 +163,23 @@ export default {
       this.page = index;
       
     },
-    loadDynamicData(usernames){
-      this.start('Fetching from Twitter...');
-      setTimeout(() => {
-        var config = { profiles: usernames, showRetweets: false, showEmpty: false }
-        extract(config).then(tweets => {
-          this.loadingText = 'Indexing your tweets...';
-          SearchEngine.load(tweets);
-          this.loadingText = 'Quering the store...';
-          this.loadTwitts();
-        })
-      }, 10)
+    async loadData(){
+      this.start('Fetching your tweets...');
+      await new Promise(resolve => setTimeout(resolve, 10))
+
+      var data = await SearchEngine.load(this.dataConfig);
+
+      if(data) {
+        this.loadingText = 'Indexing your tweets...';
+        SearchEngine.index(data);
+      }
+
+      this.loadingText = 'Quering the store...';
+      this.cleanSeach();
+      this.searchForTweets();
     },
     runAI(){
-      this.start('Waking up the AI 🤖...<br>Feedback in console');
+      this.start(msg.load.ai + '<br>Feedback in console');
       engineAI.init()
         .then(() => {
           this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
@@ -191,7 +197,7 @@ export default {
     start(text){
       this.pending = true;
       this.sidebarOpen = false;
-      var loadText = (text) ? text : 'We`re working on it...';
+      var loadText = (text) ? text : msg.load.work;
       this.loadingText = loadText;
     },
     cleanSeach(){
