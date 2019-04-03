@@ -9,16 +9,16 @@
           </div>
       </div>
       <div class="row mt-2">
-          <div class="col-8">
+          <div class="col-lg-8">
               <radar-chart :data="personalityData" :options="smallOptions" :styles="bigStyle"></radar-chart>
           </div>
-          <div class="col-4 mt-4">
-              <div>
-                    <p>+5% <i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> <br> Openness</p>
-                    <p>+5% <i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> <br> Conscientiousness</p>
-                    <p>-5% <i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> <br> Extraversion</p>
-                    <p>+5% <i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> <br> Agreeableness</p>
-                    <p>-5% <i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> <br> Neuroticism</p>
+          <div class="col-lg-4 mt-4" style="font-size:">
+              <div class="row justify-content-center">
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Openness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Conscientiousness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> -5% Extraversion<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-up" style="color: #41B883;"></i> +5% Agreeableness<br></small></div>
+                    <div class="col-4 col-md-12"><small><i class="fas fa-arrow-circle-down" style="color: #E46651;"></i> -5% Neuroticism<br></small></div>
               </div>
           </div>
       </div>
@@ -49,7 +49,7 @@
             ]
         },
         ageData: {
-            labels: ['Young', 'Middle age', 'Senior'],
+            labels: ['Young', 'Middle', 'Senior'],
             datasets: [
                 {
                     backgroundColor: [

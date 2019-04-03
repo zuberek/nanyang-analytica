@@ -55,7 +55,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 mb-2" style="padding-right:30px; padding-left:30px;">
+                <div class="col-12 col-md-6 mb-2" style="padding-right:30px; padding-left:30px;">
                     <Stats />
                 </div>
             </div>
