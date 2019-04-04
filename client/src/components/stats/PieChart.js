@@ -10,9 +10,14 @@ export default {
     options: {
       type: Object,
       default: null
+    },
+    title: {
+      type: String,
+      default: null
     }
   },
   mounted () {
-    this.renderChart(this.data, {responsive: true, maintainAspectRatio: false})
+    this.options.title.text = this.title;
+    this.renderChart(this.data, this.options)
   }
 }

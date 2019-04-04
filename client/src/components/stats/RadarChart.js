@@ -1,4 +1,7 @@
 import { Radar } from 'vue-chartjs'
+// import Chart from 'chart.js'
+
+// Chart.defaults.global.defaultFontColor = 'red';
 
 export default {
   extends: Radar,
@@ -13,6 +16,6 @@ export default {
     }
   },
   mounted () {
-    this.renderChart(this.data, {responsive: true, maintainAspectRatio: false})
+    this.renderChart(this.data, this.options)
   }
 }

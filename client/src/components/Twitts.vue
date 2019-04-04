@@ -30,9 +30,9 @@
         </div>
         
         <!-- <div v-if="info.count>0"  class="text-center row"> -->
-        <div  class="text-center row">
-            <div class="row" v-if="page===1">
-                <div class="col-6" v-if="!mobile">
+        <div class="text-center row">
+            <div class="row" v-if="page===1 && !open">
+                <div class="col-6" v-if="!mobile ">
                     <div class="row">
                         <div v-for="(twitt, index) in firstTwo" :key="index" class="col-12 mb-2" style="padding-left:30px">
                             <div class="card hoverable" >
