@@ -144,6 +144,21 @@ export default class SearchEngine {
                     time: entry.time,
                     link: entry.link,
                     body: entry.body,
+                    user: {
+                        username: entry.author.username,
+                        name: entry.author.name,
+                        profile: entry.author.link,
+                        photo: entry.author.img,
+                        gender: (Math.random() > 0.5) ? 'male' : 'female',
+                        age: (Math.random() > 0.7) ? 'young' : (Math.random() > 0.5) ? 'adult' : 'senior',
+                        personality: {
+                            conscientiousness: Math.floor(Math.random() * 100),
+                            neuroticism: Math.floor(Math.random() * 100),
+                            extraversion: Math.floor(Math.random() * 100),
+                            agreeableness: Math.floor(Math.random() * 100),
+                            openess: Math.floor(Math.random() * 100),        
+                        }
+                    }
                 }
             }, this);
         });

@@ -1,11 +1,11 @@
 <template>
   <div class="card p-3">
       <h5 class="font-weight-bold">Search Statistics</h5>
-      <div class="row">
+      <div class="row mb-2">
           <div class="col-lg-4 pr-0 mb-4" style="font-size:">
               <div class="row justify-content-center">
                     <div class="col-12 mb-2">
-                      <p class="font-weight-bold mb-0">Summary</p>
+                      <!-- <p class="font-weight-bold mb-0">Summary</p> -->
                       <small>This search term is mainly mentioned by <strong>adult </strong> <strong>men</strong> 
                       higher on <strong>openess</strong> and lower on <strong>agreeableness</strong></small>
                     </div>

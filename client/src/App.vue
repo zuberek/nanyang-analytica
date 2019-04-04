@@ -259,12 +259,16 @@ mark {
 
 .hoverable {
   transition: all 0.3s ease-in-out;
-  background-color: #f1f1f1;
   box-shadow: 0 1px 1px rgba(0,0,0,0.02);
 }
 
 .hoverable:hover {
-  background-color: #f1f1f1;
+  /* background-color: #f1f1f1; */
   box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+a {
+  color: #2c3e50 !important;
+  text-decoration: none !important;
 }
 </style>
