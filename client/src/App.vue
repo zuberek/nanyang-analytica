@@ -204,11 +204,11 @@ export default {
     runAI(){
       this.start(msg.load.ai + '<br>Feedback in console');
       engineAI.init()
-        .then(() => {
+        .then((data) => {
           this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
 
           setTimeout(() => {
-            engineAI.predictGender()
+            engineAI.predictGender(data)
               .then(predictions => {
                 this.loadingText = this.loadingText + ' ✔️<br>Success'
                 console.log(predictions);
