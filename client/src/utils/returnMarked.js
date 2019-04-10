@@ -14,17 +14,19 @@ export default function getMarkedTextObject(matchData, dataObject){
     for (const type in positions) {
         var shift = 0;
         positions[type]
-            .sort((a,b) => a[0]-b[0])
-            .forEach(pos => {
-                var text = dataObject[type];
+        .sort((a,b) => a[0]-b[0])
+        .forEach(pos => {
+            var text = dataObject[type];
+            if(text){
                 dataObject[type] = 
                     text.slice(0, pos[0]+shift) + "<mark>" + 
                     text.slice(pos[0]+shift, pos[0]+pos[1]+shift) + "</mark>" 
                     + text.slice(pos[0]+pos[1]+shift);
-
+        
                 shift = shift + 13;
+            }
             })
-    }
-
-    return dataObject;
+        }
+        
+        return dataObject;
 }
