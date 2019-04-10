@@ -79,25 +79,33 @@ export default class SearchEngine {
                     showEmpty: false 
                 }
                 var extraTweets = await extract(extractConfig) 
-                var allTweets = []       
-                for (const user in extraTweets) {
-                    allTweets = allTweets.concat(extraTweets[user]);
-                }
-                allTweets = allTweets.sort(() => Math.random() - 0.5);
+
+                var allTweets = extraTweets;       
+                // for (const user in extraTweets) {
+                //     allTweets = allTweets.concat(extraTweets[user]);
+                // }
+                // allTweets = allTweets.sort(() => Math.random() - 0.5);
                 for (const tweetId in store) {
                     var tweet = store[tweetId]
-                    allTweets.push({
-                        author: {
-                            username: tweet.username,
-                            name: tweet.name,
+                    if(tweetId != 'stats'){
+                        var userTweets = (allTweets[tweet.username]) ? allTweets[tweet.username] : [];
+                        userTweets.push({
+                            author: {
+                                username: tweet.username,
+                                name: tweet.name,
+                                link: tweet.link,
+                                img: tweet.photo,
+                            },
+                            id: tweetId,
+                            time: tweet.time,
                             link: tweet.link,
-                            img: tweet.photo,
-                        },
-                        id: tweetId,
-                        time: tweet.time,
-                        link: tweet.link,
-                        body: tweet.body, 
-                    })
+                            body: tweet.body, 
+                            gender: tweet.gender,
+                            age: tweet.age,
+                            tweet: tweet.personality
+                        })
+                        allTweets[tweet.username] = userTweets;
+                    }
                 }
                 return allTweets;
             } else {
@@ -115,13 +123,8 @@ export default class SearchEngine {
             }
             var data = await extract(extractConfig)
             // eslint-disable-next-line no-redeclare
-            var allTweets = []
-            for (const user in data) {
-                allTweets = allTweets.concat(data[user]);
-            }
-            allTweets = allTweets.sort(() => Math.random() - 0.5)
 
-            return allTweets
+            return data
         }
     }
 

@@ -23,16 +23,12 @@ const OPN_MIN = 0.48, OPN_MAX = 0.65
 export default class engineAI {
     static processed;
 
-    static init() {
+    static init(data) {
         console.log('ai engine init');
         return new Promise((resolve) => {
             console.log('loading data...');
-            extract({ profiles: ['BarackObama', 'realDonaldTrump']})
-            .then(data => {
-                // this.processed = preprocess(data.slice(0, DATA_LIMIT))
-                this.processed = preprocess(data);
-                resolve(data)
-            })
+            this.processed = preprocess(data);
+            resolve(data)
         })
     }
 
@@ -261,6 +257,14 @@ export default class engineAI {
                             .then(result => {
                                 // Take argmax to receive age group predictions
                                 const predictions =  result.map(array => array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1]);
+                                const probs = result.map(array => {
+                                    const norm = array.reduce(total, num => total + num);
+                                    const norm_probs = array.map(prob => Math.floor(100*prob/norm));
+                                    var probs_in_an_obj = {};
+                                    probs_in_an_obj.young = norm_probs[0];
+                                    probs_in_an_obj.adult = norm_probs[1];
+                                    probs_in_an_obj.senior = norm_probs[2];
+                                })
 
                                 var young_predictions = 0;
                                 var adult_predictions = 0;
@@ -289,8 +293,11 @@ export default class engineAI {
                                 data[user].forEach(tweet => {
                                     if (!tweet.user) tweet.user = {};
                                     tweet.user.age = user_prediction;
-                                    tweet.age = predictions[count++];
+                                    tweet.age = probs[count++];
                                 })
+
+                                console.log(data);
+
                                 resolve(data)
                             })
                             .catch(err => {
@@ -349,42 +356,30 @@ export default class engineAI {
 
 function preprocess(data){
 
-    // group tweets by user 
-    var userTweets = {};
-    // data.forEach(tweet => {
-    //     const user = tweet.author;
-    //     if(!user) console.log(tweet);
-    //     if(!userTweets[user.username]) userTweets[user.username] = [];
-    //     userTweets[user.username].push(tweet.body);
-    // });
-
-    console.log('predicting ' + Object.keys(data).length + ' users');
     console.log('preprocessing...');
 
-    var userTweets = {};
+    var tweetsToClassify = {};
     for (const user in data) {
         var tweets = data[user];
-        userTweets[user] = tweets.map(tweet => {
+        if (tweets[0].gender && tweets[0].age && tweets[0].personality) {
+            continue;
+        }
+
+        tweetsToClassify[user] = tweets.map(tweet => {
             tweet = tweet.body;
-            tweet = tweet.toLowerCase()
+            tweet = tweet.toLowerCase();
             tweet = tweet.replace(URL_REGEX, '~');
             tweet = tweet.replace(MENTION_REGEX, '@');
             tweet = unidecode(tweet);
-            tweet = tweet.replace(NON_ALPHANUMERIC_REGEX, '')
-            tweet = tweet.replace(REPEAT_SPACE_REGEX, ' ')
+            tweet = tweet.replace(NON_ALPHANUMERIC_REGEX, '');
+            tweet = tweet.replace(REPEAT_SPACE_REGEX, ' ');
             tweet = format_input(tweet);
             return tweet;
         })
-
-        // var monster = tf.oneHot(userTweets[user], NUMBER_OF_CHARS); // vectorize
-        // console.log(monster.shape);
-        // var padding = [[0, Math.abs(60 - chars.shape[0])] , [0,0]] // [[firstD] , [secondD]]
-        // chars = chars.pad(padding); // 
-        // reshape
-        // userTweets[user] = userTweets[user].reshape([1, TWEET_LENGTH, NUMBER_OF_CHARS]).print();
-        userTweets[user] = tf.stack(userTweets[user])
+        tweetsToClassify[user] = tf.stack(tweetsToClassify[user]);
     }
-    return userTweets;
+    console.log('predicting ' + Object.keys(tweetsToClassify).length + ' users');
+    return tweetsToClassify;
 }
 
 function format_input(tweet) {

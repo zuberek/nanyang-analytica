@@ -191,6 +191,26 @@ export default {
         await new Promise(resolve => setTimeout(resolve, 1000))
         console.log('should change');
         this.loadingText = 'Indexing your tweets...';
+
+
+        // Move AI stuff here
+
+        this.start(msg.load.ai + '<br>Feedback in console');
+        engineAI.init(data)
+        .then((data) => {
+          this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
+
+          setTimeout(() => {
+            engineAI.predictAge(data)
+              .then(predictions => {
+                this.loadingText = this.loadingText + ' ✔️<br>Success'
+                console.log(predictions);
+              });
+          }, 10)
+        })
+
+        console.log('DATA: ', data)
+
         SearchEngine.index(data, true);
       }
 
@@ -203,18 +223,6 @@ export default {
     },
     runAI(){
       this.start(msg.load.ai + '<br>Feedback in console');
-      engineAI.init()
-        .then((data) => {
-          this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
-
-          setTimeout(() => {
-            engineAI.predictGender(data)
-              .then(predictions => {
-                this.loadingText = this.loadingText + ' ✔️<br>Success'
-                console.log(predictions);
-              });
-          }, 10)
-        })
     },
     start(text){
       this.pending = true;
