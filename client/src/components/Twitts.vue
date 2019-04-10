@@ -13,7 +13,7 @@
     <div v-else class="list">
         <div class="d-flex flex-row justify-content-between">
             <div class="mt-2">
-                <p v-if="info" class="font-weight-bold">Found {{info.count}} results in {{info.time}} Miliseconds</p>
+                <p v-if="stats.count > 0" class="font-weight-bold">Found {{stats.count}} results in {{stats.time}} Miliseconds</p>
             </div>
             <div class="mb-2">   
                 <div class="dropdown">
@@ -31,93 +31,58 @@
         
         <!-- <div v-if="info.count>0"  class="text-center row"> -->
         <div class="text-center row">
-            <div class="row" v-if="page===1 && !open">
-                <div class="col-6" v-if="!mobile ">
-                    <div class="row">
-                        <div v-for="(twitt, index) in firstTwo" :key="index" class="col-12 mb-2" style="padding-left:30px">
-                            <div class="card hoverable fancy-tweet" @mouseenter="toggleCollapse(twitt.username + index  + 'top')" @mouseleave="toggleCollapse(twitt.username + index + 'top')">
-                                <div class="row m-4">
-                                    <div class="col-lg-4 col-12" v-bind:class="{ 'col-sm-12 my-4': open }">
-                                        <div>
-                                            <img class="card-img-top" :src="twitt.photo" alt="Card image cap">
-                                        </div>
-                                        <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
-                                        <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
-                                        <small class="text-muted mt-0 mb-1">{{twitt.username}} {{twitt.time}}</small>
-                                        
-                                    </div>
-                                    <div class="col-lg-8 col-12" v-if="!open">
-                                        <div class="card-body">
-                                            <p class="card-text" v-html="twitt.body"/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <b-collapse :id="twitt.username + index + 'top'" :visible="mobile">
-                                    <div class="card-footer text-muted row mx-0">
-                                        <div v-for="icon in tweetIcons" :key="icon.class" class="mt-2 col-4">
-                                            <div style="cursor: pointer;" @click="toggleModal(icon.type, twitt.username, index + 'top')">
-                                                <a v-if="icon.type==='link'" :href="twitt.link" rel="noopener noreferrer" target="_blank" > 
-                                                    <i :class="icon.class" ></i> <br>
-                                                    {{ icon.text }}
-                                                </a>
-                                                <div v-else>
-                                                    <i :class="icon.class" ></i> <br>
-                                                    {{ icon.text }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </b-collapse>
-                                <b-modal size="lg" :id="twitt.username + index + 'top'">
-                                    <div class="d-block"> {{ twitt.body }}</div>
-                                </b-modal>   
-                                <!-- <user-modal :twitt="twitt" v-if="isFirst(twitt, index, 2)"/> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 mb-2" style="padding-right:30px; padding-left:30px;">
-                    <Stats />
-                </div>
+            <div class="col-12 col-md-6 mb-2" style="padding-right:30px; padding-left:30px;">
+                <Stats :stats="stats.search"/>
             </div>
             <div v-for="(twitt, index) in slicedTweets" :key="index" class="col-lg-6 mb-2" v-bind:class="{ 'col-6': open }" >
-                <div class="card hoverable fancy-tweet" @mouseenter="toggleCollapse(twitt.username + index)" @mouseleave="toggleCollapse(twitt.username + index)">
+                <div class="card hoverable fancy-tweet" @mouseenter="toggleCollapse(twitt.user.username + index)" @mouseleave="toggleCollapse(twitt.user.username + index)">
                     <div class="row m-4">
                         <div class="col-sm-4 p-2" v-bind:class="{ 'col-sm-12 my-4': open }">
                             <div>
-                                <img class="card-img-top" :src="twitt.photo" alt="Card image cap">
+                                <img class="card-img-top" :src="twitt.user.photo" alt="Card image cap">
                             </div>
                             <h5 class="card-title mt-2 mb-0" v-html="twitt.name" />
                             <!-- <small class="text-muted mt-0 mb-1">{{twitt.gender}}, {{twitt.age}} years</small> -->
-                            <small class="text-muted mt-0 mb-1">{{twitt.username}} {{twitt.time}}</small>
+                            <small class="text-muted mt-0 mb-1">{{twitt.user.username}} {{twitt.time}}</small>
                              
                         </div>
                         <div class="col-sm-8" v-if="!open">
                             <div class="card-body">
-                                <!-- <a class="btn btn-primary" v-b-toggle="twitt.username + index">Toggle first element</a> -->
+                                <!-- <a class="btn btn-primary" v-b-toggle="twitt.user.username + index">Toggle first element</a> -->
   
                                 <p class="card-text" v-html="twitt.body"/>
                             </div>
                         </div>
                     </div>
-                    <b-collapse :id="twitt.username + index" :visible="mobile">
+                    <b-collapse :id="twitt.user.username + index" :visible="mobile">
                         <div class="card-footer text-muted row mx-0">
-                            <div v-for="icon in tweetIcons" :key="icon.class" class="mt-2 col-4">
-                                <div style="cursor: pointer;" @click="toggleModal(icon.type, twitt.username, index)">
-                                    <a v-if="icon.type==='link'" :href="twitt.link" rel="noopener noreferrer" target="_blank" > 
-                                        <i :class="icon.class" ></i> <br>
-                                        {{ icon.text }}
-                                    </a>
-                                    <div v-else>
-                                        <i :class="icon.class" ></i> <br>
-                                        {{ icon.text }}
+                            <div class="mt-2 col-4">
+                                <div style="cursor: pointer;" @click="toggleModal(icon.type, twitt.user.username, index)">
+                                    <div>
+                                        <i class="fas fa-user-circle" ></i> <br>
+                                        Profile
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="mt-2 col-4">
+                                <div style="cursor: pointer;" @click="toggleModal(icon.type, twitt.user.username, index)">
+                                    <div>
+                                        <i class="fas fa-user-circle" ></i> <br>
+                                        Tweet
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="mt-2 col-4">
+                                <div style="cursor: pointer;" @click="toggleModal(icon.type, twitt.user.username, index)">
+                                    <a :href="twitt.link" rel="noopener noreferrer" target="_blank" > 
+                                        <i class="fas fa-play-circle" ></i> <br>
+                                        Link
+                                    </a>
+                                </div>
+                                </div>
+                        </div>  
                     </b-collapse>
-                    <b-modal size="lg" :id="twitt.username + index">
+                    <b-modal size="lg" :id="twitt.user.username + index">
                         <div class="d-block"> {{ twitt.body }}</div>
                     </b-modal>
                 </div>
@@ -171,7 +136,7 @@ export default {
             type: Array,
             required: true,
         },
-        info: {
+        stats: {
             type: Object,
             required: true,
         },
@@ -195,7 +160,7 @@ export default {
     computed: {
         noOfPages () {
             var num = 0;
-            if(this.info.count) num = Math.ceil(this.info.count/8);
+            if(this.stats.count) num = Math.ceil(this.stats.count/8);
             if(num > 10) num = 10;
             return num;
         },
@@ -211,6 +176,8 @@ export default {
             this.twitts.forEach(element => {
                 users.push(element.user);
             });
+            var userNames = users.map(u => u.username)
+            users = users.filter((user, index) => userNames.indexOf(user.username) == index)
             return users;
         },
         tweetIcons() {
@@ -255,17 +222,6 @@ export default {
                     break;
             }
         },
-        isFirst(tweet, index, sliced){
-            var isFirst = false;
-            if(sliced === 2){
-                isFirst = this.firstTwo.findIndex(t=>t.username === tweet.username) === index
-            } else if (sliced === 6) {
-                isFirst = this.twitts.findIndex(t=>t.username === tweet.username) === index + 2
-            } else {
-                isFirst = this.twitts.findIndex(t=>t.username === tweet.username) === index
-            }
-            return isFirst;
-        }
     }
 }
 </script>

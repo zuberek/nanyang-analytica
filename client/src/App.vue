@@ -11,7 +11,7 @@
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="searchForTweets" />
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :info="info" :sort="sortBy" :open="sidebarOpen" :page="page" :text="pageText" :mobile="mobile"/>
+        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :stats="stats" :sort="sortBy" :open="sidebarOpen" :page="page" :text="pageText" :mobile="mobile"/>
         <div v-else>
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
@@ -62,7 +62,10 @@ export default {
       loadingText: msg.load.work,
       pageText: msg.hello,
       page: 1,
-      twitts: {},
+      twitts: [],
+      stats: {
+        count: 0,
+      },
       windowWidth: window.innerWidth,
     }
   },
@@ -73,15 +76,15 @@ export default {
   computed: {
     info() {
       var info = {};
-      if(this.twitts.twitts) info.count = this.twitts.twitts.length;
+      if(this.twitts) info.count = this.twitts.length;
       if(this.twitts.time) info.time = this.twitts.time;
       return info;
     },
     displayedTwitts() {
-      if(!this.twitts.twitts) return [];
+      if(!this.twitts) return [];
       var page = [];
       for (let i = (this.page-1)*8; i < this.page*8; i++) {
-        if(this.twitts.twitts[i]) page.push(this.twitts.twitts[i])
+        if(this.twitts[i]) page.push(this.twitts[i])
       }
       return page.map(t => returnMarked(t.positions, t));
     },
@@ -143,14 +146,20 @@ export default {
         var result = SearchEngine.search(this.searchQuery.search);
 
         var { age, gender } = this.searchQuery;
-        gender = gender.toLowerCase();      
+        gender = gender.toLowerCase();
+
+        var tweets = result.twitts;
         
         if (gender)
-          result.twitts = result.twitts.filter(twitt => twitt.gender === gender);
+          tweets = tweets.filter(twitt => twitt.gender === gender);
         if(!(age[0] === 0 && age[1] === 100)) 
-          result.twitts = result.twitts.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
+          tweets = tweets.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
 
-        this.twitts = result;
+        tweets.slice(0, 10000)
+
+        this.twitts = tweets;
+        this.stats.count = result.twitts.length;
+        this.stats.time = result.twitts.time;
         // console.log(result);
         this.page = 1;
         if(result.twitts.length === 0) this.pageText = msg.error;
@@ -158,6 +167,9 @@ export default {
         // cool off
         setTimeout(() => {
           this.pending = false;
+
+          var stats = SearchEngine.getStats(result.twitts)
+          this.stats.search = stats;
         },500)
         
       }, 10)
