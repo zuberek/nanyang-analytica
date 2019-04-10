@@ -10,8 +10,12 @@
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="searchForTweets" />
+        <button @click="runAI">Fuck the AI!</button>
         
-        <twitts v-if="!pending" :twitts="displayedTwitts" :loadPage="loadPage" :stats="stats" :sort="sortBy" :open="sidebarOpen" :page="page" :text="pageText" :mobile="mobile"/>
+        <div v-if="!pending">
+          <search-summary :loadPage="loadPage" :stats="stats" :sort="sortBy" :text="pageText" />
+          <tweet-grid v-if="displayedTwitts.length > 0" :tweets="displayedTwitts" :loadPage="loadPage" :stats="stats" :open="sidebarOpen" :page="page"  :mobile="mobile"/>
+        </div>
         <div v-else>
           <loader class="whole-page" :loading="pending" :text="loadingText"/>
         </div>
@@ -27,7 +31,8 @@
 
 <script>
 import Sidebar from './components/Sidebar.vue'
-import Twitts from './components/Twitts.vue'
+import TweetGrid from './components/tweets/TweetGrid.vue'
+import SearchSummary from './components/tweets/SearchSummary.vue'
 import SearchBar from './components/SearchBar.vue'
 import Loader from './components/Loader.vue'
 import SearchEngine from '../backend/search/search-engine.js';
@@ -41,7 +46,8 @@ export default {
   name: 'app',
   components: {
     Sidebar,
-    Twitts,
+    TweetGrid,
+    SearchSummary,
     SearchBar,
     Loader,
   },
@@ -65,6 +71,7 @@ export default {
       twitts: [],
       stats: {
         count: 0,
+        time: 0,
       },
       windowWidth: window.innerWidth,
     }
@@ -159,20 +166,15 @@ export default {
 
         this.twitts = tweets;
         this.stats.count = result.twitts.length;
-        this.stats.time = result.twitts.time;
+        this.stats.time = result.time;
+        this.stats.average = result.average;
+        this.stats.search = SearchEngine.getStats(result.twitts)
         // console.log(result);
         this.page = 1;
         if(result.twitts.length === 0) this.pageText = msg.error;
-
-        // cool off
-        setTimeout(() => {
-          this.pending = false;
-
-          var stats = SearchEngine.getStats(result.twitts)
-          this.stats.search = stats;
-        },500)
+        this.pending = false;
         
-      }, 10)
+      }, 100)
     },
     loadPage(index){
       if(index - 1 < 1) index = 1;
@@ -212,7 +214,6 @@ export default {
                 console.log(predictions);
               });
           }, 10)
-
         })
     },
     start(text){

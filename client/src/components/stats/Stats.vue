@@ -47,57 +47,6 @@
     },
     data () {
       return {
-        genderData: {
-            labels: ['Man', 'Woman'],
-            datasets: [
-                {
-                    backgroundColor: [
-                        '#DD1B16',
-                        '#28a745',
-                    ],
-                    data: [160, 90]
-                }
-            ]
-        },
-        ageData: {
-            labels: ['Young', 'Adult', 'Senior'],
-            datasets: [
-                {
-                    backgroundColor: [
-                        '#007bff',
-                        '#DD1B16',
-                        '#ffc107',
-                    ],
-                    data: [70, 90, 90]
-                }
-            ]
-        },
-        personalityData: {
-            labels: ['Conscientiousness','Neuroticism', 'Extraversion', 'Agreeableness', 'Openess'],
-            // labels: ['O', 'C', 'E', 'A', 'N'],
-            datasets: [
-              {
-                  label: 'Search',
-                  backgroundColor: 'rgba(255,99,132,0.2)',
-                  borderColor: 'rgb(255, 10, 122)',
-                  pointBackgroundColor: 'rgba(255,99,132,1)',
-                  pointBorderColor: '#fff',
-                  pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(255,99,132,1)',
-                  data: [28, 48, 40, 19, 96]
-              },
-              {
-                  label: 'Average',
-                  backgroundColor: 'rgba(179,181,198,0.2)',
-                  borderColor: 'rgb(23, 162, 184)',
-                  pointBackgroundColor: 'rgba(179,181,198,1)',
-                  pointBorderColor: '#fff',
-                  pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(179,181,198,1)',
-                  data: [65, 59, 90, 81, 56]
-              },
-            ]
-        },
         smallStyle: {
             maxHeight: '150px',
             position: 'relative' // ☝ Important!
@@ -126,6 +75,82 @@
     computed: {
       mobile() {
         return this.windowWidth < 800;
+      },
+      genderData() {            
+        var gender = [];
+        if (!this.stats.search) return;
+        for (const type in this.stats.search.gender) {
+            gender.push(this.stats.search.gender[type])
+        }
+
+        var data = {
+            labels: ['Man', 'Woman'],
+            datasets: [
+                {
+                    backgroundColor: [
+                        '#DD1B16',
+                        '#28a745',
+                    ],
+                    data: gender
+                }
+            ]
+        }
+        return data;
+      },
+      ageData() {             
+        var age = [];
+        if (!this.stats.search) return;
+        for (const type in this.stats.search.age) {
+            age.push(this.stats.search.age[type])
+        }
+        var data = {
+          labels: ['Young', 'Adult', 'Senior'],
+          datasets: [
+              {
+                  backgroundColor: [
+                      '#007bff',
+                      '#DD1B16',
+                      '#ffc107',
+                  ],
+                  data: age
+              }
+          ]
+        }
+        return data;
+      },
+      personalityData() {
+            var search = [];
+            var average = [];
+            if (!this.stats.search) return;
+            for (const type in this.stats.search.personality) {
+                search.push(this.stats.search.personality[type])
+                average.push(this.stats.average.searchPersonality[type])
+            }
+            var data =  { labels: ['Conscientiousness','Neuroticism', 'Extraversion', 'Agreeableness', 'Openess'],
+                datasets: [
+                    {
+                        label: 'Search',
+                        backgroundColor: 'rgba(255,99,132,0.2)',
+                        borderColor: 'rgb(255, 10, 122)',
+                        pointBackgroundColor: 'rgba(255,99,132,1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255,99,132,1)',
+                        data: search,
+                    },
+                    {
+                        label: 'Average',
+                        backgroundColor: 'rgba(179,181,198,0.2)',
+                        borderColor: 'rgb(23, 162, 184)',
+                        pointBackgroundColor: 'rgba(179,181,198,1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(179,181,198,1)',
+                        data: average,
+                    },
+                ]
+            }
+            return data;
       },
       smallOptions() {
         var options = {

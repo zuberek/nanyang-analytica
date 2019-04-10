@@ -8,9 +8,9 @@ const INDEX = 'search/index'
 const STORE = 'search/store'
 
 const OPTIONS = {
-    small: '_small.json',
-    medium: '_medium.json',
-    large: '_large.json'
+    small: '.10000.json',
+    medium: '.50000.json',
+    large: '.100000.json'
 }
 
 
@@ -20,8 +20,9 @@ const SEARCH_ENGINE_ACTIVE = bool
 
 
 export default class SearchEngine {
-    static idx;
+    static idx;s
     static store;
+    static average;
 
     static async init() {
         var text = (SEARCH_ENGINE_ACTIVE) ? 'search engine init' : 'search engine not active'
@@ -35,6 +36,7 @@ export default class SearchEngine {
         
         var store = await fetchJson(BASE_URL + STORE + OPTIONS.small);
         this.store = store;
+        this.average = store.stats;
         console.log('search engine loaded');
     }
 
@@ -49,12 +51,14 @@ export default class SearchEngine {
             var positions = index.matchData;
             results.twitts.push({
                 ...this.store[index.ref],
+                id: index.ref,
                 positions: positions,
                 score: index.score,
             })
         });      
         var time = new Date() - start
         results.time = time;
+        results.average = this.average;
         console.log('Found ' + results.twitts.length + ' results in ' + time + ' Miliseconds');      
         return results;
     }
@@ -73,7 +77,7 @@ export default class SearchEngine {
                     profiles: config.dynamic, 
                     showRetweets: false, 
                     showEmpty: false 
-                  }
+                }
                 var extraTweets = await extract(extractConfig) 
                 var allTweets = []       
                 for (const user in extraTweets) {
@@ -167,6 +171,57 @@ export default class SearchEngine {
             this.store = store;
         }
         return {store, index}
+    }
+
+    static getStats(tweets){
+        var users = [];
+        var maleCount = 0;
+        var youngCount = 0;
+        var adultCount = 0;
+    
+        var personality = {
+            conscientiousness: 0,
+            neuroticism: 0,
+            extraversion: 0,
+            agreeableness: 0,
+            openess: 0,            
+        }
+    
+        for (const tweetId in tweets) {
+            if(!users.includes(tweets[tweetId].user.username)) {
+                var user = tweets[tweetId].user;
+                users.push(user.username);
+                if(user.gender === '0') maleCount++;
+                if(user.age === '0') youngCount++;
+                else if(user.age === '1') adultCount++;
+    
+                personality.conscientiousness += parseFloat(user.personality.conscientiousness)
+                personality.neuroticism += parseFloat(user.personality.neuroticism)
+                personality.extraversion += parseFloat(user.personality.extraversion)
+                personality.agreeableness += parseFloat(user.personality.agreeableness)
+                personality.openess += parseFloat(user.personality.openess)
+            }
+        }
+    
+        var numberOfPerson = users.length;
+    
+        for (const type in personality) {
+            personality[type] = Math.floor((personality[type]/numberOfPerson) * 100);
+        }
+    
+        var stats = {
+            gender: {
+                male: maleCount,
+                female: users.length - maleCount
+            },
+            age: {
+                young: youngCount,
+                adult: adultCount,
+                senior: users.length - youngCount - adultCount
+            },
+            personality,
+        }    
+        return stats;
     }
 }
 

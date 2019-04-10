@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="lg"  :id="twitt.username">
+    <b-modal size="lg"  :id="tweet.id + user.username">
         asdfasdf
         <radar-chart :data="personalityData" :options="bigOptions"></radar-chart>
     </b-modal>
@@ -14,17 +14,20 @@ export default {
         BModal,
     },
     props: {
-        twitt: {
+        tweet: {
             type: Object,
             required: true,
         },
     },
     computed: {
+        user() {
+            return this.tweet.user;
+        },
         personalityData() {
             var personality = [];
-            if (!this.twitt.predictions) return;
-            for (const type in this.twitt.predictions.personality) {
-                personality.push(this.twitt.predictions.personality[type])
+            if (!this.user.personality) return;
+            for (const type in this.user.personality.personality) {
+                personality.push(this.user.personality.personality[type])
             }
             var data =  { labels: ['Conscientiousness','Neuroticism', 'Extraversion', 'Agreeableness', 'Openess'],
                 // labels: ['O', 'C', 'E', 'A', 'N'],
