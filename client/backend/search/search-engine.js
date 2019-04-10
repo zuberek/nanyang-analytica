@@ -102,7 +102,7 @@ export default class SearchEngine {
                             body: tweet.body, 
                             gender: tweet.gender,
                             age: tweet.age,
-                            tweet: tweet.personality
+                            personality: tweet.personality
                         })
                         allTweets[tweet.username] = userTweets;
                     }

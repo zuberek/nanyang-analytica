@@ -258,18 +258,17 @@ export default class engineAI {
                                 // Take argmax to receive age group predictions
                                 const predictions =  result.map(array => array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1]);
                                 const probs = result.map(array => {
-                                    const norm = array.reduce(total, num => total + num);
+                                    const norm = array.reduce((total, num) => total + num);
                                     const norm_probs = array.map(prob => Math.floor(100*prob/norm));
-                                    var probs_in_an_obj = {};
-                                    probs_in_an_obj.young = norm_probs[0];
-                                    probs_in_an_obj.adult = norm_probs[1];
-                                    probs_in_an_obj.senior = norm_probs[2];
+                                    return {
+                                        young: norm_probs[0],
+                                        adult: norm_probs[1],
+                                        senior: norm_probs[2]};
                                 })
 
                                 var young_predictions = 0;
                                 var adult_predictions = 0;
                                 var senior_predictions = 0;
-    
                                 predictions.forEach(p => {
                                     if (p == YOUNG) {
                                         young_predictions++;
@@ -359,10 +358,15 @@ function preprocess(data){
     console.log('preprocessing...');
 
     var tweetsToClassify = {};
+    var count = 0;
     for (const user in data) {
         var tweets = data[user];
         if (tweets[0].gender && tweets[0].age && tweets[0].personality) {
+            console.log('Should skip user ' + user);
             continue;
+        } else {
+            if (count == 1) console.log(tweets[0])
+            count++
         }
 
         tweetsToClassify[user] = tweets.map(tweet => {
