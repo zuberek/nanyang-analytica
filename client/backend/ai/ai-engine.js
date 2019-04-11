@@ -327,6 +327,7 @@ export default class engineAI {
                         prediction.array()
                             .then(result => {
                                 const predictions =  result.map(array => array[0]);
+                                const probs = result.map(array => Math.floor(array[0]*100));
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
                                 var user_prediction = (sum/predictions.length<0.5) ? 0 : 1;
@@ -335,7 +336,7 @@ export default class engineAI {
                                 data[user].forEach(tweet => {
                                     if (!tweet.user) tweet.user = {};
                                     tweet.user.gender = user_prediction;
-                                    tweet.gender = predictions[count++];
+                                    tweet.gender = probs[count++];
                                 })
                                 resolve(data)
                             })
@@ -407,8 +408,8 @@ function format_input(tweet) {
             one_hot_vectors = tf.oneHot(word, VOCAB_SIZE)
         }
         else {
-            var word = new Array(MAX_CHARS).fill(0);
-            one_hot_vectors = tf.oneHot(word, VOCAB_SIZE)
+            var padding_word = new Array(MAX_CHARS).fill(0);
+            one_hot_vectors = tf.oneHot(padding_word, VOCAB_SIZE)
         }
 
         encoded_tweet.push(one_hot_vectors)
