@@ -173,15 +173,29 @@ export default {
 
         var result = SearchEngine.search(this.searchQuery.search);
 
-        var { age, gender } = this.searchQuery;
+        var { age, gender, personality } = this.searchQuery;
         gender = gender.toLowerCase();
 
         var tweets = result.twitts;
         
-        if (gender)
-          tweets = tweets.filter(twitt => twitt.gender === gender);
-        if(!(age[0] === 0 && age[1] === 100)) 
-          tweets = tweets.filter(twitt => twitt.age >= age[0] && twitt.age <= age[1]);
+        if (gender) {
+          var genderCode = (gender === 'Male') ? 1 : 0;
+          tweets = tweets.filter(twitt => parseInt(twitt.user.gender) === genderCode);
+        }
+        if(!(age[0] === 0 && age[1] === 100)) {
+          var options = [];
+          if(age[0] == 18 && age[1] > 18) options.push('0')
+          if(age[0] <= 25 && age[1] > 25) options.push('1')
+          if(age[0] <= 34 && age[1] > 34) options.push('2')
+          tweets = tweets.filter(twitt => options.includes(twitt.user.age));
+        }
+
+        personality = personality.filter(type => type.val[0] !== 0 || type.val[1] !== 100)
+        personality.forEach(type => {
+          tweets = tweets.filter(twitt => {
+            var tweetVal = parseFloat(twitt.user.personality[type.name.toLowerCase()]);
+            return tweetVal >= type.val[0]/100 && tweetVal <= type.val[1]/100;
+        })})
 
         tweets.slice(0, 10000)
 

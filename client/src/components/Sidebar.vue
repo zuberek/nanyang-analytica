@@ -216,7 +216,7 @@ export default {
           var random = randomUsers
               .filter(u => !this.dataFields.dynamic.includes(u) && u.length>0)
               .sort(() => Math.random() - 0.5)
-              .slice(0,10);
+              .slice(0,3);
           this.dataFields.dynamic = this.dataFields.dynamic.concat(random);
           this.loadDataMethod();
         },
