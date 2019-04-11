@@ -359,14 +359,10 @@ function preprocess(data){
     console.log('preprocessing...');
 
     var tweetsToClassify = {};
-    var count = 0;
     for (const user in data) {
         var tweets = data[user];
         if (tweets[0].gender && tweets[0].age && tweets[0].personality) {
             continue;
-        } else {
-            if (count == 1) console.log(tweets[0])
-            count++
         }
 
         tweetsToClassify[user] = tweets.map(tweet => {
