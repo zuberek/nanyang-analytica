@@ -1,16 +1,27 @@
 <template>
     <b-modal size="lg"  :id="tweet.id + user.username">
-        asdfasdf
-        <radar-chart :data="personalityData" :options="bigOptions"></radar-chart>
+        <div class="row">
+            <div class="col-5">
+                <div class="mb-2">
+                    <img class="card-img-top" :src="user.photo" alt="Card image cap">
+                </div>
+                {{user.name}}
+            </div>
+            <div class="col-7">
+                {{ user.age }} {{ user.gender }} <br>
+                <small class="mt-2"><strong>Personality</strong></small>
+                <div v-for="type in personality" :key="type.type + tweet.id">
+                    {{ type.type }}: {{ type.val }}
+                </div>
+            </div>
+        </div>
     </b-modal>
 </template>
 
 <script>
-import RadarChart from '../stats/RadarChart.js'
 import BModal from 'bootstrap-vue/es/components/modal/modal'
 export default {
     components: {
-        RadarChart,
         BModal,
     },
     props: {
@@ -21,57 +32,35 @@ export default {
     },
     computed: {
         user() {
-            return this.tweet.user;
+            var user = {}
+            if(this.tweet.user.age == 0) user.age = 'Young'
+            if(this.tweet.user.age == 1) user.age = 'Adult'
+            if(this.tweet.user.age == 2) user.age = 'Senior'
+            user.gender = (this.tweet.user.gender == 0) ? 'Man' : 'Woman'
+            return {
+                ...this.tweet.user,
+                age: user.age,
+                gender: user.gender,
+            };
         },
-        personalityData() {
-            var personality = [];
-            if (!this.user.personality) return;
-            for (const type in this.user.personality.personality) {
-                personality.push(this.user.personality.personality[type])
+        personality() {
+            var personality = this.user.personality;
+            var result = []
+            for (const type in personality) {
+                if(type == 'neuroticism') {
+                    result.push({
+                        type,
+                        val: Math.floor(100 - personality[type] * 100)
+                    })
+                } else {
+                    result.push({
+                        type,
+                        val: Math.floor(personality[type] * 100)
+                    })
+                }
             }
-            var data =  { labels: ['Conscientiousness','Neuroticism', 'Extraversion', 'Agreeableness', 'Openess'],
-                // labels: ['O', 'C', 'E', 'A', 'N'],
-                datasets: [
-                    {
-                        label: 'Personality',
-                        backgroundColor: 'rgba(255,99,132,0.2)',
-                        borderColor: 'rgb(255, 10, 122)',
-                        pointBackgroundColor: 'rgba(255,99,132,1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(255,99,132,1)',
-                        data: personality
-                    },
-                ]
-            }
-            return data;
+            return result;
         },
-        bigOptions() {
-            var options = {
-            legend: {
-                position: 'top',
-            },
-            responsive: true, 
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                position: 'top',
-                padding: 2,
-                text: 'Personality'
-            }
-            }
-            return options;
-      },
-    },
-    data () {
-      return {
-
-        bigStyle: {
-            maxHeight: '300px',
-            maxWidth: '320px',
-            position: 'relative' // ☝ Important!
-        }
-      }
     },
 }
 </script>

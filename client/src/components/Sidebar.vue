@@ -2,10 +2,9 @@
     <ScaleRotate 
         disableOutsideClick
         noOverlay
-        :crossIcon="false"
+        v-click-outside="close"
         width="320"
         :isOpen="isOpen"    
-        v-click-outside="close"
         @openMenu="set(true)"
         @closeMenu="close"
     >
@@ -29,27 +28,41 @@
                       class="form-group"
                       v-tooltip.right="{ html: 'tooltipContent', visible: !mobile }"
                     >
-                        <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
+                        <div class="input-group">
+                          <input class="form-control" type="text" placeholder="Keyword" v-model="query.search">
+                          <div class="input-group-append">
+                            <button  
+                              class="d-none" 
+                              type="submit" />
+                            <div  
+                              class="btn btn-outline-warning"
+                              v-b-toggle.collapse-1>
+                              More <i class="fas fa-caret-down" ></i> 
+                            </div >
+                          </div>
+                        </div>
                     </div>
-                    <div v-tooltip.right="{ content: 'Not working yet', visible: !mobile }">
-                      <div class="form-group">
-                          <label for="">Gender</label>
-                          <select class="form-control" v-model="query.gender">
-                              <option>Male</option>
-                              <option>Female</option>
-                          </select>
-                      </div>
-                      <div class="form-group mb-4">
-                          <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
-                          <vue-slider 
-                              :marks="true"
-                              :data="data" 
-                              v-model="query.age" 
-                              :lazy="true"
-                              :enable-cross="false"
-                          />
-                      </div>
-                    </div>
+                    <b-collapse id="collapse-1" class="mt-2">
+                        <div class="form-group">
+                            <label for="">Gender</label>
+                            <select class="form-control" v-model="query.gender">
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="customRange1">Age: {{query.age[0]}} - {{query.age[1]}}</label>
+                            <vue-slider 
+                                :marks="true"
+                                :data="data" 
+                                v-model="query.age" 
+                                :lazy="true"
+                                :enable-cross="false"
+                            />
+                        </div>
+
+                        <personality-picker :query="query"/>
+                    </b-collapse>
                     
                     <div class="row justify-content-around">
                     <button 
@@ -160,14 +173,22 @@
 
 <script>
 import { ScaleRotate } from 'vue-burger-menu';
+import BCollapse from 'bootstrap-vue/es/components/collapse/collapse'
 import VueSlider from 'vue-slider-component';
+import PersonalityPicker from './PersonalityPicker.vue';
 import randomUsers from "../utils/randomUsers.js";
 import msg from '../messages.js';
+import BToggleDirective from 'bootstrap-vue/es/directives/toggle/toggle'
 
 export default {
     components: {
         ScaleRotate,
         VueSlider,
+        PersonalityPicker,
+        BCollapse,
+    },
+    directives: {
+      'b-toggle': BToggleDirective
     },
     data () {
         return {
@@ -175,12 +196,13 @@ export default {
             asdf: 10,
             currUserName: '',
             marks: [0, 10, 50, 100],
-            data: [0, 18, 23, 42, 100],
+            data: [18, 25, 34, 100],
             loadText: 'Load',
         }
     },
     methods: {
         loadDataMethod(){
+          if(this.currUserName) this.dataFields.dynamic.push(this.currUserName);
           this.update(this.asdf);
           this.dataFields.static = this.asdf;
           this.loadText = 'Reload';
@@ -195,7 +217,8 @@ export default {
               .filter(u => !this.dataFields.dynamic.includes(u) && u.length>0)
               .sort(() => Math.random() - 0.5)
               .slice(0,10);
-          this.dataFields.dynamic = this.dataFields.dynamic.concat(random)
+          this.dataFields.dynamic = this.dataFields.dynamic.concat(random);
+          this.loadDataMethod();
         },
         remove(name){
             this.dataFields.dynamic = this.dataFields.dynamic.filter(n => n != name);

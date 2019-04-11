@@ -47,7 +47,12 @@ export default {
             var filteredQuery = {};
             // Remove empty
             Object.keys(this.query).forEach(key => {
-                if(this.query[key]) filteredQuery[key] = this.query[key];
+                if(key == 'personality') {
+                    this.query[key].forEach(type => {
+                        if(type.val[0] !== 0 || type.val[1] !== 100)
+                            filteredQuery[type.name] = type.val
+                    })
+                } else if(this.query[key]) filteredQuery[key] = this.query[key];
             });
             // Remove age if default
             if(this.query.age[0] === 0 && this.query.age[1] === 100) 

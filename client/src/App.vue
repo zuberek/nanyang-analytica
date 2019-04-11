@@ -10,7 +10,6 @@
     <main id="page-wrap" v-bind:class="{ 'squizzer': !sidebarOpen }">
       <div class="container mt-4">
         <search-bar :query="searchQuery" v-bind:class="{ 'd-none': sidebarOpen }" :load="searchForTweets" />
-        <button @click="runAI">Fuck the AI!</button>
         
         <div v-if="!pending">
           <search-summary :loadPage="loadPage" :stats="stats" :sort="sortBy" :text="pageText" />
@@ -59,6 +58,28 @@ export default {
         search: "",
         gender: "",
         age: [0, 100],
+        personality: [
+            {
+              name: 'Conscientiousness',
+              val: [0, 100]
+            },
+            {
+              name: 'Neuroticism',
+              val: [0, 100]
+            },
+            {
+              name: 'Extraversion',
+              val: [0, 100]
+            },
+            {
+              name: 'Agreeableness',
+              val: [0, 100]
+            },
+            {
+              name: 'Openess',
+              val: [0, 100]
+            },      
+        ],
       },
       dataConfig: {
         preloaded: "asdfasdfasdfafds",
@@ -184,45 +205,53 @@ export default {
     },
     async loadData(){
       this.start('Fetching your tweets...');
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise(resolve => setTimeout(resolve, 10)) // udpate FE
 
       var data = await SearchEngine.load(this.dataConfig);
-      if(typeof data != "undefined" && data) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        console.log('should change');
-        this.loadingText = 'Indexing your tweets...';
+      if(typeof data == "undefined" || !data) return
 
+      await new Promise(resolve => setTimeout(resolve, 1000))
 
-        // Move AI stuff here
+      this.start(msg.load.ai + '<br>Feedback in console');
 
-        this.start(msg.load.ai + '<br>Feedback in console');
-        engineAI.init(data)
-        .then((data) => {
-          this.loadingText = 'Waking up the AI ✔️<br>Predicting gender...'
+      data = await engineAI.init(data)
+      this.loadingText = 'Waking up the AI ✔️<br>Predicting age...'
+      data = await engineAI.predictAge(data)
 
-          setTimeout(() => {
-            engineAI.predictAge(data)
-              .then(predictions => {
-                this.loadingText = this.loadingText + ' ✔️<br>Success'
-                console.log(predictions);
-              });
-          }, 10)
-        })
+      this.loadingText = this.loadingText + '✔️<br>Predicting gender...'
+      data = await engineAI.predictGender(data)
 
-        console.log('DATA: ', data)
+      this.loadingText = this.loadingText + '✔️<br>Predicting personality...<br>Conscientiousness...'
+      data = await engineAI.predictConscientiousness(data)
 
-        SearchEngine.index(data, true);
-      }
+      this.loadingText = this.loadingText + '✔️<br>Openess...'
+      data = await engineAI.predictOpenness(data)
+
+      this.loadingText = this.loadingText + '✔️<br>Agreeableness...'
+      data = await engineAI.predictAgreeableness(data)
+
+      this.loadingText = this.loadingText + '✔️<br>Neuroticism...'
+      data = await engineAI.predictStability(data)
+
+      this.loadingText = this.loadingText + '✔️<br>Extraversion...'
+      data = await engineAI.predictExtraversion(data)
+
+      this.loadingText = this.loadingText + ' ✔️<br>Indexing your tweets...'
+      
+      await new Promise(resolve => setTimeout(resolve, 1000)) // update FE
+      SearchEngine.index(data, true);
 
       this.loadingText = 'Quering the store...';
       this.cleanSeach();
       var result = SearchEngine.search(this.searchQuery.search);
-      this.twitts = result;
+      this.twitts = result.twitts;
+      this.stats.count = result.twitts.length;
+      this.stats.time = result.time;
+      this.stats.average = result.average;
+      this.stats.search = SearchEngine.getStats(result.twitts)
       this.page = 1;
       this.pending = false;
-    },
-    runAI(){
-      this.start(msg.load.ai + '<br>Feedback in console');
+      
     },
     start(text){
       this.pending = true;
@@ -231,9 +260,33 @@ export default {
       this.loadingText = loadText;
     },
     cleanSeach(){
-      this.search = "";
-      this.gender = "";
-      this.age = [0, 100];
+      this.searchQuery = {  
+        search: "",
+        gender: "",
+        age: [0, 100],
+        personality: [
+            {
+              name: 'Conscientiousness',
+              val: [0, 100]
+            },
+            {
+              name: 'Neuroticism',
+              val: [0, 100]
+            },
+            {
+              name: 'Extraversion',
+              val: [0, 100]
+            },
+            {
+              name: 'Agreeableness',
+              val: [0, 100]
+            },
+            {
+              name: 'Openess',
+              val: [0, 100]
+            },      
+        ],
+      }
     }
   },
 }

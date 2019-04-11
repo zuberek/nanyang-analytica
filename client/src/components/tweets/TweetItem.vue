@@ -45,24 +45,21 @@
                     </div>
             </div>  
         </b-collapse>
-        <b-modal size="lg" :id="tweet.id">
-            <div class="d-block"> {{ tweet.body }}</div>
-        </b-modal>
 
-        
+        <tweet-modal :tweet="tweet" />
         <user-modal :tweet="tweet"/>
     </div>
 </template>
 
 <script>
 import BCollapse from 'bootstrap-vue/es/components/collapse/collapse'
-import BModal from 'bootstrap-vue/es/components/modal/modal'
 import UserModal from '../modals/UserModal.vue'
+import TweetModal from '../modals/TweetModal.vue'
 
 export default {
     components: {
         BCollapse,
-        BModal,
+        TweetModal,
         UserModal,
     },
     props: {

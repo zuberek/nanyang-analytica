@@ -76,9 +76,11 @@ export default class SearchEngine {
                 extractConfig = {
                     profiles: config.dynamic, 
                     showRetweets: false, 
-                    showEmpty: false 
+                    showEmpty: false,
+                    noOfTweets: 100,
                 }
                 var extraTweets = await extract(extractConfig) 
+                console.log('Pulled in: ' + extraTweets[Object.keys(extraTweets)[0]].length + ' tweets');
 
                 var allTweets = extraTweets;       
                 // for (const user in extraTweets) {
@@ -91,10 +93,13 @@ export default class SearchEngine {
                         var userTweets = (allTweets[tweet.username]) ? allTweets[tweet.username] : [];
                         userTweets.push({
                             author: {
-                                username: tweet.username,
-                                name: tweet.name,
-                                link: tweet.link,
-                                img: tweet.photo,
+                                username: tweet.user.username,
+                                name: tweet.user.name,
+                                link: tweet.user.profile,
+                                img: tweet.user.photo,
+                                gender: tweet.user.gender,
+                                age: tweet.user.age,
+                                personality: tweet.user.personality,
                             },
                             id: tweetId,
                             time: tweet.time,
@@ -119,7 +124,8 @@ export default class SearchEngine {
             extractConfig = {
                 profiles: config.dynamic, 
                 showRetweets: false, 
-                showEmpty: false 
+                showEmpty: false,
+                noOfTweets: 100,
             }
             var data = await extract(extractConfig)
             // eslint-disable-next-line no-redeclare
@@ -129,45 +135,48 @@ export default class SearchEngine {
     }
 
     static async index(data, assign) {
-        console.log(`Indexing ${data.length} tweets`);
+        console.log(`Indexing ${Object.keys(data).length} users`);
         var store = {};
         var index = lunr(function(){
             this.ref('id');
             this.field('body');
             this.field('name');
             this.metadataWhitelist = ['position']
-            
-            data.forEach(function(entry){
-                this.add({
-                    id: entry.id,
-                    body: entry.body,
-                    name: entry.author.name,
-                });
-                store[entry.id] = {
-                    username: entry.author.username,
-                    name: entry.author.name,
-                    profile: entry.author.link,
-                    photo: entry.author.img,
-                    time: entry.time,
-                    link: entry.link,
-                    body: entry.body,
-                    user: {
-                        username: entry.author.username,
+
+            for (const userId in data) {
+                var tweets = data[userId];
+
+                tweets.forEach(entry => {
+                    this.add({
+                        id: entry.id,
+                        body: entry.body,
                         name: entry.author.name,
-                        profile: entry.author.link,
-                        photo: entry.author.img,
-                        gender: (Math.random() > 0.5) ? 'male' : 'female',
-                        age: (Math.random() > 0.7) ? 'young' : (Math.random() > 0.5) ? 'adult' : 'senior',
-                        personality: {
-                            conscientiousness: Math.floor(Math.random() * 100),
-                            neuroticism: Math.floor(Math.random() * 100),
-                            extraversion: Math.floor(Math.random() * 100),
-                            agreeableness: Math.floor(Math.random() * 100),
-                            openess: Math.floor(Math.random() * 100),        
+                    });
+                    if(!entry.author) console.log(entry);
+                    store[entry.id] = {
+                        time: entry.time,
+                        link: entry.link,
+                        body: entry.body,
+                        age: entry.age,
+                        gender: entry.gender,
+                        user: {
+                            username: entry.author.username,
+                            name: entry.author.name,
+                            profile: entry.author.link,
+                            photo: entry.author.img,
+                            gender: entry.author.gender,
+                            age: entry.author.age,
+                            personality: {
+                                conscientiousness: entry.author.personality.conscientiousness,
+                                neuroticism: entry.author.personality.neuroticism,
+                                extraversion: entry.author.personality.extraversion,
+                                agreeableness: entry.author.personality.agreeableness,
+                                openess: entry.author.personality.openess,        
+                            }
                         }
                     }
-                }
-            }, this);
+                }, this)
+            }
         });
         if(assign){
             this.idx = index;
@@ -194,9 +203,9 @@ export default class SearchEngine {
             if(!users.includes(tweets[tweetId].user.username)) {
                 var user = tweets[tweetId].user;
                 users.push(user.username);
-                if(user.gender === '0') maleCount++;
-                if(user.age === '0') youngCount++;
-                else if(user.age === '1') adultCount++;
+                if(user.gender === '0' || user.gender === 0) maleCount++;
+                if(user.age === '0' || user.age === 0) youngCount++;
+                else if(user.age === '1' || user.age === 1) adultCount++;
     
                 personality.conscientiousness += parseFloat(user.personality.conscientiousness)
                 personality.neuroticism += parseFloat(user.personality.neuroticism)

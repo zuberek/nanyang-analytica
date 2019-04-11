@@ -2,9 +2,6 @@
 import unidecode from 'unidecode';
 import mapping from './char_mapping'
 import * as tf from '@tensorflow/tfjs';
-import extract from "../scrape/main";
-
-const DATA_LIMIT = 200;
 
 const VOCAB_SIZE = 41
 const MAX_WORDS = 10
@@ -46,8 +43,8 @@ export default class engineAI {
                     
                         prediction.array()
                             .then(result => {
-                                var predictions = result.map(array => Math.floor(100*(array[0] - OPN_MIN)/(OPN_MAX-OPN_MIN)));
-                                predictions = predictions.map(pred => (pred > 100) ? 100 : ((pred < 0) ? 0 : pred))
+                                var predictions = result.map(array => (array[0] - OPN_MIN)/(OPN_MAX-OPN_MIN));
+                                predictions = predictions.map(pred => (pred > 1) ? 1 : ((pred < 0) ? 0 : pred))
                                 
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
@@ -55,9 +52,11 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.openness = user_prediction;
-                                    tweet.openness = predictions[count++];
+                                    if (!tweet.author) tweet.author = {};
+                                    if (!tweet.author.personality) tweet.author.personality = {};
+                                    if (!tweet.personality) tweet.personality = {};
+                                    tweet.author.personality.openess = user_prediction;
+                                    tweet.personality.openess = predictions[count++];
                                 })
                                 resolve(data)
                             })
@@ -88,8 +87,8 @@ export default class engineAI {
                     
                         prediction.array()
                             .then(result => {
-                                var predictions = result.map(array => Math.floor(100*(array[0] - CON_MIN)/(CON_MAX-CON_MIN)));
-                                predictions = predictions.map(pred => (pred > 100) ? 100 : ((pred < 0) ? 0 : pred))
+                                var predictions = result.map(array => (array[0] - CON_MIN)/(CON_MAX-CON_MIN));
+                                predictions = predictions.map(pred => (pred > 1) ? 1 : ((pred < 0) ? 0 : pred))
                                 
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
@@ -97,9 +96,11 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.conscientiousness = user_prediction;
-                                    tweet.conscientiousness = predictions[count++];
+                                    if (!tweet.author) tweet.author = {};
+                                    if (!tweet.author.personality) tweet.author.personality = {};
+                                    if (!tweet.personality) tweet.personality = {};
+                                    tweet.author.personality.conscientiousness = user_prediction;
+                                    tweet.personality.conscientiousness = predictions[count++];
                                 })
                                 resolve(data)
                             })
@@ -130,8 +131,8 @@ export default class engineAI {
                     
                         prediction.array()
                             .then(result => {
-                                var predictions = result.map(array => Math.floor(100*(array[0] - AGR_MIN)/(AGR_MAX-AGR_MIN)));
-                                predictions = predictions.map(pred => (pred > 100) ? 100 : ((pred < 0) ? 0 : pred))
+                                var predictions = result.map(array => (array[0] - AGR_MIN)/(AGR_MAX-AGR_MIN));
+                                predictions = predictions.map(pred => (pred > 1) ? 1 : ((pred < 0) ? 0 : pred))
                                 
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
@@ -139,9 +140,11 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.agreeableness = user_prediction;
-                                    tweet.agreeableness = predictions[count++];
+                                    if (!tweet.author) tweet.author = {};
+                                    if (!tweet.author.personality) tweet.author.personality = {};
+                                    if (!tweet.personality) tweet.personality = {};
+                                    tweet.author.personality.agreeableness = user_prediction;
+                                    tweet.personality.agreeableness = predictions[count++];
                                 })
                                 resolve(data)
                             })
@@ -172,8 +175,8 @@ export default class engineAI {
                     
                         prediction.array()
                             .then(result => {
-                                var predictions = result.map(array => Math.floor(100*(array[0] - STA_MIN)/(STA_MAX-STA_MIN)));
-                                predictions = predictions.map(pred => (pred > 100) ? 100 : ((pred < 0) ? 0 : pred))
+                                var predictions = result.map(array => (array[0] - STA_MIN)/(STA_MAX-STA_MIN));
+                                predictions = predictions.map(pred => (pred > 1) ? 1 : ((pred < 0) ? 0 : pred))
                                 
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
@@ -181,9 +184,11 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.stability = user_prediction;
-                                    tweet.stability = predictions[count++];
+                                    if (!tweet.author) tweet.author = {};
+                                    if (!tweet.author.personality) tweet.author.personality = {};
+                                    if (!tweet.personality) tweet.personality = {};
+                                    tweet.author.personality.neuroticism = user_prediction;
+                                    tweet.personality.neuroticism = predictions[count++];
                                 })
                                 resolve(data)
                             })
@@ -214,8 +219,8 @@ export default class engineAI {
                     
                         prediction.array()
                             .then(result => {
-                                var predictions = result.map(array => Math.floor(100*(array[0] - EXT_MIN)/(EXT_MAX-EXT_MIN)));
-                                predictions = predictions.map(pred => (pred > 100) ? 100 : ((pred < 0) ? 0 : pred))
+                                var predictions = result.map(array => (array[0] - EXT_MIN)/(EXT_MAX-EXT_MIN));
+                                predictions = predictions.map(pred => (pred > 1) ? 1 : ((pred < 0) ? 0 : pred))
                                 
                                 var sum = 0;
                                 predictions.forEach(p => sum = sum+p);
@@ -223,9 +228,11 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.extraversion = user_prediction;
-                                    tweet.extraversion = predictions[count++];
+                                    if (!tweet.author) tweet.author = {};
+                                    if (!tweet.author.personality) tweet.author.personality = {};
+                                    if (!tweet.personality) tweet.personality = {};
+                                    tweet.author.personality.extraversion = user_prediction;
+                                    tweet.personality.extraversion = predictions[count++];
                                 })
                                 resolve(data)
                             })
@@ -290,8 +297,8 @@ export default class engineAI {
     
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.age = user_prediction;
+                                    if (!tweet.author) tweet.author = {};
+                                    tweet.author.age = user_prediction;
                                     tweet.age = probs[count++];
                                 })
 
@@ -334,8 +341,8 @@ export default class engineAI {
                                 
                                 var count = 0;
                                 data[user].forEach(tweet => {
-                                    if (!tweet.user) tweet.user = {};
-                                    tweet.user.gender = user_prediction;
+                                    if (!tweet.author) tweet.author = {};
+                                    tweet.author.gender = user_prediction;
                                     tweet.gender = probs[count++];
                                 })
                                 resolve(data)
